@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.log
+.env
+.env.local
+.oauth-token
+.DS_Store
+Thumbs.db

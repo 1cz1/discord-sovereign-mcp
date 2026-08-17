@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "discord": {
+      "command": "npx",
+      "args": ["tsx", "C:\\path\\to\\DiscordServerMCP\\src\\index.ts"],
+      "env": {
+        "DISCORD_TOKEN": "your-bot-or-oauth2-token",
+        "DISCORD_TOKEN_TYPE": "auto",
+        "DISCORD_ALLOWED_GUILDS": "",
+        "TRANSPORT": "stdio",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
