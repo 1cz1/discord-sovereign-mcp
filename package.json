@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "bin": {
-    "discord-sovereign-mcp": "./dist/index.js"
+    "discord-sovereign-mcp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "exports": {

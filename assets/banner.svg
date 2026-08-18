@@ -1,91 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="discord-sovereign-mcp banner">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" role="img" aria-label="discord-sovereign-mcp banner">
   <defs>
-    <radialGradient id="dsm-glow-p" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#5865f2" stop-opacity="0.30"/>
-      <stop offset="1" stop-color="#5865f2" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="dsm-glow-g" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#00ff85" stop-opacity="0.14"/>
-      <stop offset="1" stop-color="#00ff85" stop-opacity="0"/>
-    </radialGradient>
     <linearGradient id="dsm-shield" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#7a88ff"/>
       <stop offset="1" stop-color="#4a57e0"/>
     </linearGradient>
-    <g id="dsm-mark">
-      <path d="M200 40 L320 92 V192 C320 262 268 306 200 330 C132 306 80 262 80 192 V92 Z"
-            fill="url(#dsm-shield)" opacity="0.22" stroke="#00ff85" stroke-width="10" stroke-linejoin="round"/>
-      <path d="M200 68 L294 110 V192 C294 246 254 280 200 300 C146 280 106 246 106 192 V110 Z"
-            fill="none" stroke="#5865f2" stroke-width="2"/>
-      <path d="M128 92 L152 128 L176 96 L194 120 L212 96 L236 128 L260 92 L250 146 H138 Z"
-            fill="#00ff85" stroke="#0a0b0e" stroke-width="3" stroke-linejoin="round"/>
-      <circle cx="200" cy="152" r="6" fill="#0a0b0e"/>
-      <path d="M162 200 L184 222 L226 178" fill="none" stroke="#00ff85" stroke-width="11"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
+    <radialGradient id="dsm-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#5865f2" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#5865f2" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <rect width="1280" height="640" fill="#0a0b0e"/>
+  <rect width="1200" height="120" fill="#0d0d0f"/>
+  <circle cx="0" cy="60" r="330" fill="url(#dsm-glow)"/>
 
-  <!-- hairline grid -->
-  <g stroke="#151a24" stroke-width="1">
-    <path d="M0 80 H1280 M0 160 H1280 M0 240 H1280 M0 320 H1280 M0 400 H1280 M0 480 H1280 M0 560 H1280"/>
-    <path d="M160 0 V640 M320 0 V640 M480 0 V640 M640 0 V640 M800 0 V640 M960 0 V640 M1120 0 V640"/>
+  <!-- mark: shield + crown + check -->
+  <g transform="translate(28 26) scale(0.34)">
+    <path d="M128 46 L182 66 V122 C182 160 160 186 128 198 C96 186 74 160 74 122 V66 Z"
+          fill="url(#dsm-shield)" opacity="0.22" stroke="#00ff85" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M128 60 L170 75 V122 C170 152 152 174 128 184 C104 174 86 152 86 122 V75 Z"
+          fill="none" stroke="#5865f2" stroke-width="1.5"/>
+    <path d="M96 62 L108 82 L120 64 L128 78 L136 64 L148 82 L160 62 L154 96 H102 Z"
+          fill="#00ff85" stroke="#0a0b0e" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="128" cy="102" r="4" fill="#0a0b0e"/>
+    <path d="M110 128 L122 140 L146 114" fill="none" stroke="#00ff85" stroke-width="7"
+          stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-
-  <!-- glows -->
-  <circle cx="260" cy="240" r="430" fill="url(#dsm-glow-p)"/>
-  <circle cx="1150" cy="540" r="320" fill="url(#dsm-glow-g)"/>
-
-  <rect x="0.5" y="0.5" width="1279" height="639" fill="none" stroke="#21262d" stroke-width="1"/>
-
-  <!-- logo mark -->
-  <use href="#dsm-mark" transform="translate(60 130) scale(1.05)"/>
 
   <!-- wordmark -->
-  <text x="520" y="212" fill="#f0f3f8" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
-        font-size="52" font-weight="700" letter-spacing="-1">discord-sovereign-mcp</text>
-  <text x="522" y="252" fill="#8b949e" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
-        font-size="19" font-weight="600" letter-spacing="3.5">SOVEREIGNTY GUARD · DISCORD ADMIN FOR LLMS</text>
-  <text x="522" y="296" fill="#00ff85" font-family="'Cascadia Code', 'Consolas', monospace"
-        font-size="24" font-weight="700">THE #1 ROLE OR NOTHING</text>
+  <text x="102" y="62" fill="#eef1f6" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="34" font-weight="700" letter-spacing="-0.5">discord-sovereign-mcp</text>
+  <line x1="104" y1="74" x2="418" y2="74" stroke="#5865f2" stroke-width="3" stroke-linecap="round"/>
 
-  <line x1="522" y1="322" x2="1010" y2="322" stroke="#21262d" stroke-width="1.5"/>
-
-  <!-- feature pills -->
-  <g font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="15" font-weight="600">
-    <g>
-      <rect x="522" y="344" width="118" height="36" rx="18" fill="#12151c" stroke="#21262d"/>
-      <text x="581" y="367" fill="#d5dbe4" text-anchor="middle">46 TOOLS</text>
-    </g>
-    <g>
-      <rect x="652" y="344" width="146" height="36" rx="18" fill="#12151c" stroke="#21262d"/>
-      <text x="725" y="367" fill="#d5dbe4" text-anchor="middle">STDIO · HTTP</text>
-    </g>
-    <g>
-      <rect x="810" y="344" width="196" height="36" rx="18" fill="#12151c" stroke="#21262d"/>
-      <text x="908" y="367" fill="#d5dbe4" text-anchor="middle">OAUTH2 BOOTSTRAP</text>
-    </g>
-    <g>
-      <rect x="1018" y="344" width="160" height="36" rx="18" fill="#12151c" stroke="#21262d"/>
-      <text x="1098" y="367" fill="#d5dbe4" text-anchor="middle">DRY-RUN SAFETY</text>
-    </g>
-  </g>
-
-  <!-- terminal card -->
-  <g>
-    <rect x="522" y="404" width="580" height="122" rx="12" fill="#0d1117" stroke="#21262d"/>
-    <circle cx="544" cy="424" r="6" fill="#ff5f56"/>
-    <circle cx="564" cy="424" r="6" fill="#ffbd2e"/>
-    <circle cx="584" cy="424" r="6" fill="#27c93f"/>
-    <text x="522" y="466" fill="#c9d1d9" font-family="'Cascadia Code', 'Consolas', monospace" font-size="16">$ npx discord-sovereign-mcp@latest --install</text>
-    <text x="522" y="494" fill="#00ff85" font-family="'Cascadia Code', 'Consolas', monospace" font-size="15">✓ 9 clients detected · configs written for every IDE</text>
-    <text x="522" y="514" fill="#8b949e" font-family="'Cascadia Code', 'Consolas', monospace" font-size="15">  token: DISCORD_TOKEN · guard: enforced server-side</text>
-  </g>
+  <text x="104" y="96" fill="#8b949e" font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
+        font-size="13" font-weight="600" letter-spacing="2.5">SOVEREIGNTY GUARD · DISCORD ADMIN FOR LLMS</text>
 
   <!-- corner meta -->
-  <text x="1236" y="52" fill="#5865f2" font-family="'Cascadia Code', 'Consolas', monospace"
-        font-size="18" font-weight="700" text-anchor="end">v0.2.0</text>
-  <text x="1236" y="74" fill="#484f58" font-family="'Cascadia Code', 'Consolas', monospace"
-        font-size="13" text-anchor="end">MIT · node ≥ 20 · zero config</text>
+  <text x="1172" y="48" fill="#5865f2" font-family="'Cascadia Code', 'Consolas', monospace"
+        font-size="16" font-weight="700" text-anchor="end">v0.2.0</text>
+  <text x="1172" y="70" fill="#484f58" font-family="'Cascadia Code', 'Consolas', monospace"
+        font-size="12" text-anchor="end">MIT · node ≥ 20</text>
 </svg>

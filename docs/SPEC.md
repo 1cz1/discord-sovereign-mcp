@@ -43,6 +43,28 @@ src/client/*        discordClient (typed @discordjs/rest wrappers), errors (tran
 Discord REST API (api/v10)
 ```
 
+Same flow with the guard surfaced explicitly:
+
+```
+┌────────────────────────────┐        ┌──────────────────────────────────────────┐
+│  MCP client                │  MCP   │  discord-sovereign-mcp (Node 20+)          │
+│  Claude Code / Codex /     │◄──────►│  stdio  or  Streamable HTTP (POST /mcp)    │
+│  opencode / Cursor / ...   │        │                                           │
+└────────────────────────────┘        │  registry ── 46 strict-zod tools           │
+                                       │    │                                       │
+                                       │    ▼                                       │
+                                       │  guard() ── ControlService.assertControl  │
+                                       │    │  owner? (user token)                  │
+                                       │    │  #1 role? (bot token)                 │
+                                       │    │  DISCORD_ALLOWED_GUILDS?               │
+                                       │    ▼                                       │
+                                       │  DiscordClient ── @discordjs/rest REST API │
+                                       │  PermissionService (read-only auditor)     │
+                                       │  ScaffoldService (template planner)        │
+                                       │  OAuthService (user-token bootstrap)       │
+                                       └──────────────────────────────────────────┘
+```
+
 ### Module responsibilities
 
 | Module | Responsibility |

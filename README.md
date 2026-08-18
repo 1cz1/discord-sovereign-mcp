@@ -1,27 +1,21 @@
 <p align="center">
-  <img src="assets/logo.svg" width="96" alt="discord-sovereign-mcp logo">
-</p>
-
-<h1 align="center">discord-sovereign-mcp</h1>
-
-<p align="center">
-  Full-lifecycle Discord MCP server — create, administer, and scaffold entire Discord servers
-  from any LLM, gated by a <b>Sovereignty Guard</b> that only mutates when the client holds the
-  <b>#1 (highest) role</b> in the guild's role hierarchy.
+  <img src="https://raw.githubusercontent.com/1cz1/discord-sovereign-mcp/master/assets/banner.svg"
+       width="720" alt="discord-sovereign-mcp">
 </p>
 
 <p align="center">
-  <img src="assets/banner.svg" width="640" alt="discord-sovereign-mcp banner">
+  Full-lifecycle Discord MCP server for any LLM — gated by a <b>Sovereignty Guard</b> that only
+  mutates when the client holds the <b>#1 (highest) role</b> in the guild's role hierarchy.
 </p>
 
 <p align="center">
-  <img src="assets/badges/version.svg" alt="version 0.2.0">
-  <img src="assets/badges/license.svg" alt="MIT license">
-  <img src="assets/badges/tools.svg" alt="46 tools">
-  <img src="assets/badges/tests.svg" alt="80 tests passing">
-  <img src="assets/badges/node.svg" alt="node >= 20">
-  <img src="assets/badges/transport.svg" alt="stdio | http">
-  <img src="assets/badges/guard.svg" alt="sovereignty guard">
+  <img src="https://img.shields.io/npm/v/discord-sovereign-mcp?style=flat&color=5865F2" alt="npm version">
+  <img src="https://img.shields.io/npm/dm/discord-sovereign-mcp?style=flat&color=5865F2" alt="npm downloads">
+  <img src="https://img.shields.io/npm/l/discord-sovereign-mcp?style=flat&color=5865F2" alt="license">
+  <img src="https://img.shields.io/badge/node-%3E%3D20-339933?style=flat" alt="node >= 20">
+  <img src="https://img.shields.io/badge/tools-46-5865F2?style=flat" alt="46 tools">
+  <img src="https://img.shields.io/badge/tests-80%20passing-2EA44F?style=flat" alt="80 tests passing">
+  <img src="https://img.shields.io/badge/transport-stdio%20%7C%20http-5865F2?style=flat" alt="stdio | http">
 </p>
 
 ---
@@ -51,35 +45,32 @@ Prefer manual setup? Copy the ready-made config for your client from
 
 ## What you get
 
-- **46 tools** across six areas — control, guilds, channels, members, scaffolding, OAuth — all
-  snake_case, `discord_`-prefixed, schema-strict, and documented in [TOOLS.md](./TOOLS.md).
-- **Sovereign Control Guard**: every destructive tool is `dry_run` by default and must pass
-  `discord_assert_sovereignty` before executing with `dry_run: false` — enforced on the server
-  side, not just in prompts.
-- **One-shot server scaffolding** (`discord_scaffold_server`): roles, categories, channels, and
-  permission overwrites from a declarative template (minimal / community / gaming / support), with
-  guard-once, per-step failure isolation, and partial-failure reconciliation output.
-- **OAuth2 bootstrap** for user-token mode (`npx discord-sovereign-mcp --oauth`), plus a built-in
-  `/callback` handler when running over HTTP transport.
-- **Both transports**: stdio (MCP clients) and Streamable HTTP (`POST /mcp`, `GET /health`).
-- **Safety rails**: guild allowlist (`DISCORD_ALLOWED_GUILDS`), audit-log reasons, idempotency
-  checks, `dry_run` previews that return the exact API payload, and a read-only permission
-  calculator/auditor.
+- **46 tools** across control, guilds, channels, members, scaffolding, and OAuth — snake_case,
+  `discord_`-prefixed, schema-strict, documented in [TOOLS.md](./TOOLS.md).
+- **Sovereign Control Guard** — every destructive tool is `dry_run` by default and must pass
+  `discord_assert_sovereignty` before executing with `dry_run: false`, enforced server-side.
+- **One-shot server scaffolding** — `discord_scaffold_server` builds roles, categories, channels,
+  and permission overwrites from a declarative template (minimal / community / gaming / support).
+- **OAuth2 bootstrap** for user-token mode (`--oauth`) and **safety rails**: guild allowlist,
+  audit-log reasons, idempotency checks, and `dry_run` previews that return the exact API payload.
 
 ## Quick start
 
 ```bash
-# Option A — run directly (OAuth2 user-token bootstrap included)
+# run directly (stdio)
+npx discord-sovereign-mcp@latest
+
+# run with OAuth2 user-token bootstrap
 npx discord-sovereign-mcp@latest --oauth
 
-# Option B — from source
+# from source
 npm install
 cp .env.example .env        # then edit: DISCORD_TOKEN (or OAuth2 vars)
 npm run build
 npm test                    # 80 unit tests
 ```
 
-### Option A — bot token (recommended for servers you own)
+### Token setup — bot (recommended for servers you own)
 
 1. Create an application at <https://discord.com/developers/applications>.
 2. Under **Bot**: create the bot, copy the token, enable **SERVER MEMBERS INTENT** and
@@ -87,9 +78,9 @@ npm test                    # 80 unit tests
 3. Under **OAuth2 → URL Generator**: scope `bot`, permissions `Administrator`, invite the bot to
    your server. (Administrator is required for server-scoped operations; the guard still enforces
    role position.)
-4. `DISCORD_TOKEN=<token>` in `.env`, `DISCORD_TOKEN_TYPE=bot` (or `auto`).
+4. `DISCORD_TOKEN=<token>` in `.env` — `DISCORD_TOKEN_TYPE=auto` detects bot vs user.
 
-### Option B — user token via OAuth2
+### Token setup — user token via OAuth2
 
 1. Create an application; under **OAuth2 → General** add a redirect
    `http://localhost:8788/callback`.
@@ -134,28 +125,6 @@ wiring), then permission overwrites — guarding **once** before the first step.
 isolated: on failure the tool returns `steps_total / steps_completed / steps_failed` plus the
 already-created role/channel IDs so a partial scaffold can be reconciled by hand.
 
-## Architecture
-
-```
-┌────────────────────────────┐        ┌──────────────────────────────────────────┐
-│  MCP client                │  MCP   │  discord-sovereign-mcp (Node 20+)          │
-│  Claude Code / Codex /     │◄──────►│  stdio  or  Streamable HTTP (POST /mcp)    │
-│  opencode / Cursor / ...   │        │                                           │
-└────────────────────────────┘        │  registry ── 46 strict-zod tools           │
-                                      │    │                                       │
-                                      │    ▼                                       │
-                                      │  guard() ── ControlService.assertControl  │
-                                      │    │  owner? (user token)                  │
-                                      │    │  #1 role? (bot token)                 │
-                                      │    │  DISCORD_ALLOWED_GUILDS?               │
-                                      │    ▼                                       │
-                                      │  DiscordClient ── @discordjs/rest REST API │
-                                      │  PermissionService (read-only auditor)     │
-                                      │  ScaffoldService (template planner)        │
-                                      │  OAuthService (user-token bootstrap)       │
-                                      └──────────────────────────────────────────┘
-```
-
 ## Environment variables
 
 | Variable | Default | Description |
@@ -188,47 +157,21 @@ already-created role/channel IDs so a partial scaffold can be reconciled by hand
 Ready-to-paste files: [examples/mcp/](./examples/mcp). Every client invokes the server the same
 way: `npx discord-sovereign-mcp@latest`.
 
-## Evaluation
-
-```bash
-npm run eval               # offline: registry invariants (no token, no network)
-npm run eval -- --live     # spawns dist/ and runs protocol-level checks against real Discord
-```
-
-## Project layout
-
-```
-src/
-  index.ts                 # entrypoint: stdio + HTTP transports, /health, /callback, --install
-  config.ts                # typed env config + guild allowlist
-  constants.ts             # server identity, permission/color constants
-  bootstrap/               # one-shot CLI: installer (--install), OAuth bootstrap (--oauth)
-  client/                  # Discord REST client + error translation
-  services/                # control (sovereignty), permissions, scaffolding, OAuth
-  tools/                   # 46 RegisteredTools + registry wiring + shared zod schemas
-  utils/                   # formatting (bigint-safe JSON)
-tests/                     # vitest suite (80 tests)
-scripts/                   # oauth bootstrap, eval runner, docs generator
-```
-
 ## Development
 
 ```bash
 npm run typecheck   # tsc --noEmit
 npm run test        # vitest run
-npm run test:watch
-npm run test:coverage
 npm run install:mcp # run the installer locally (tsx)
 npm run oauth       # OAuth2 user-token bootstrap
 npm run eval        # offline registry checks (add --live for protocol checks)
-npx tsx scripts/gen-tools-doc.ts   # regenerate TOOLS.md
 ```
 
 ## Docs
 
 - [TOOLS.md](./TOOLS.md) — full reference for all 46 tools (generated).
 - [docs/INSTALL.md](./docs/INSTALL.md) — the installer: flags, token resolution, what gets written.
-- [docs/SPEC.md](./docs/SPEC.md) — design spec: threat model, guard semantics, tool contracts.
+- [docs/SPEC.md](./docs/SPEC.md) — design spec: architecture, threat model, guard semantics, tool contracts.
 - [docs/RECIPES.md](./docs/RECIPES.md) — end-to-end recipes for common workflows.
 - [SECURITY.md](./SECURITY.md) — threat model, token handling, and reporting policy.
 
