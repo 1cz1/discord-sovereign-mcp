@@ -25,7 +25,7 @@ const live = process.argv.includes('--live');
 const results = [];
 const record = (ok, label, detail = '') => {
   results.push({ ok, label, detail });
-  if (!jsonOut) console.log(`${ok ? '  PASS' : '  FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`);
+  if (!jsonOut) console.log(`${ok ? '  PASS' : '  FAIL'}  ${label}${detail ? `: ${detail}` : ''}`);
 };
 
 async function offline() {
@@ -42,7 +42,7 @@ async function liveChecks() {
     return false;
   }
   if (!existsSync('dist/index.js')) {
-    console.error('[eval] dist/index.js not found — run `npm run build` first.');
+    console.error('[eval] dist/index.js not found: run `npm run build` first.');
     return false;
   }
 

@@ -104,7 +104,7 @@ export interface PermissionPreload {
  * Computes the effective permissions of a member in a guild.
  * Applies the owner bypass, the Administrator shortcut, guild-level
  * @everyone + role permissions, then channel overwrites in Discord's
- * documented precedence order (@everyone → roles → member).
+ * documented precedence order (@everyone -> roles -> member).
  * Pass `preloaded` (guild, member, roles fetched once) when computing
  * permissions for many channels of the same guild to avoid N+1 fetches.
  */
@@ -156,19 +156,19 @@ export async function calculateMemberPermissions(
     const everyoneOverwrite = overwrites.find((o) => o.type === OverwriteType.Role && o.id === guildId);
     if (everyoneOverwrite) {
       apply(everyoneOverwrite);
-      source += ' → channel @everyone overwrite';
+      source += ' -> channel @everyone overwrite';
     }
     for (const role of memberRoles) {
       const o = overwrites.find((ow) => ow.type === OverwriteType.Role && ow.id === role.id);
       if (o) {
         apply(o);
-        source += ` → @${role.name} overwrite`;
+        source += ` -> @${role.name} overwrite`;
       }
     }
     const memberOverwrite = overwrites.find((o) => o.type === OverwriteType.Member && o.id === userId);
     if (memberOverwrite) {
       apply(memberOverwrite);
-      source += ' → member overwrite';
+      source += ' -> member overwrite';
     }
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "discord-sovereign-mcp",
   "version": "0.2.0",
-  "description": "Full-lifecycle Discord MCP server: create, administer, and scaffold entire Discord servers from any LLM — gated by a Sovereignty Guard that only operates when the client holds the #1 role.",
+  "description": "Full-lifecycle Discord MCP server: create, administer, and scaffold entire Discord servers from any LLM: gated by a Sovereignty Guard that only operates when the client holds the #1 role.",
   "type": "module",
   "license": "MIT",
   "engines": {

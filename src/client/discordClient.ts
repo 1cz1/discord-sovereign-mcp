@@ -145,7 +145,7 @@ export class DiscordClient {
     if (this.isBot) {
       throw new Error(
         'Bots cannot create guilds via the Discord API. Complete the OAuth2 bootstrap ' +
-          '(run `npm run oauth`) to obtain a user token, then retry — or set DISCORD_TOKEN to a user token.'
+          '(run `npm run oauth`) to obtain a user token, then retry: or set DISCORD_TOKEN to a user token.'
       );
     }
     return this.request<APIGuild>('post', Routes.guilds(), { body: data, auth: true });

@@ -1,6 +1,6 @@
 # TOOLS.md
 
-Auto-generated from the tool registry — 46 tools. Regenerate with `npx tsx scripts/gen-tools-doc.ts`.
+Auto-generated from the tool registry: 46 tools. Regenerate with `npx tsx scripts/gen-tools-doc.ts`.
 
 Every tool is `discord_`-prefixed, snake_case, and schema-strict (unknown keys are rejected). Destructive tools take a `dry_run` flag (default `true`) and, when `dry_run: false`, first assert Sovereign Control (`discord_assert_sovereignty` / `discord_elevate_control`).
 
@@ -67,7 +67,7 @@ Bans a member from the guild and optionally deletes their recent messages (0-7 d
 
 _read-only_  
 
-Read-only. Computes the effective permission set of a member in a guild, following Discord precedence: owner bypass → Administrator → @everyone + role permissions → channel @everyone/role/member overwrites. Pass channel_id to include channel overwrites. Use this before acting to predict what a member can actually do.
+Read-only. Computes the effective permission set of a member in a guild, following Discord precedence: owner bypass -> Administrator -> @everyone + role permissions -> channel @everyone/role/member overwrites. Pass channel_id to include channel overwrites. Use this before acting to predict what a member can actually do.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -80,7 +80,7 @@ Read-only. Computes the effective permission set of a member in a guild, followi
 ### discord_create_guild
 
 
-Creates a brand-new guild (server) with the acting user/OAuth2 token. Supports name (2-100 chars), icon (base64 data URI), a guild template code, verification level (0-4), default message notifications (0 all, 1 mentions only), explicit content filter (0-2), system channel id, initial roles (name, permission names, color, hoist, mentionable — the first role in the array configures @everyone), and initial channels (name, type, parent_id, topic — categories must be listed before their children). Example: {"name": "My New Server", "verification_level": 1, "roles": [{"name": "Mod", "permissions": ["ManageRoles"]}]}. Fails when the token is a bot (bots cannot create guilds), the name is invalid, or the account is at the 100-guild limit. No sovereignty guard applies (the guild is new).
+Creates a brand-new guild (server) with the acting user/OAuth2 token. Supports name (2-100 chars), icon (base64 data URI), a guild template code, verification level (0-4), default message notifications (0 all, 1 mentions only), explicit content filter (0-2), system channel id, initial roles (name, permission names, color, hoist, mentionable: the first role in the array configures @everyone), and initial channels (name, type, parent_id, topic: categories must be listed before their children). Example: {"name": "My New Server", "verification_level": 1, "roles": [{"name": "Mod", "permissions": ["ManageRoles"]}]}. Fails when the token is a bot (bots cannot create guilds), the name is invalid, or the account is at the 100-guild limit. No sovereignty guard applies (the guild is new).
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -140,7 +140,7 @@ Creates a public or private thread in a text/announcement/forum channel. Note: f
 | --- | --- | --- |
 | `channel_id` | string | **required** Discord snowflake ID of the channel. |
 | `name` | string | **required** Thread name (1-100 characters). |
-| `message_id` | optional string | Optional starter message ID. For forum channels the post starter is required — pass the starter message ID here; it is forwarded to the thread creation payload. |
+| `message_id` | optional string | Optional starter message ID. For forum channels the post starter is required: pass the starter message ID here; it is forwarded to the thread creation payload. |
 | `type` | optional enum(public_thread | private_thread) | public_thread (default) or private_thread. |
 | `auto_archive_duration` | optional union | Minutes of inactivity before auto-archive: 60, 1440 (1 day), 4320 (3 days), or 10080 (1 week). |
 | `rate_limit_per_user` | optional number | Slowmode: seconds a user must wait between messages (0-21600). |
@@ -153,7 +153,7 @@ Creates a public or private thread in a text/announcement/forum channel. Note: f
 
 _destructive_  
 
-Permanently deletes a guild and ALL of its content — channels, roles, messages, emoji, and integrations. This cannot be undone. Example: {"guild_id": "123456789012345678", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token; bots cannot delete guilds). Dry-run by default; set dry_run=false to actually delete.
+Permanently deletes a guild and ALL of its content: channels, roles, messages, emoji, and integrations. This cannot be undone. Example: {"guild_id": "123456789012345678", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token; bots cannot delete guilds). Dry-run by default; set dry_run=false to actually delete.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -164,7 +164,7 @@ Permanently deletes a guild and ALL of its content — channels, roles, messages
 
 _destructive_  
 
-Permanently deletes a role from a guild. Every member holding the role loses it immediately — any permissions, colors, and channel overwrites tied to the role vanish. Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). Fails when the role does not exist or is above the client in the hierarchy. Dry-run by default.
+Permanently deletes a role from a guild. Every member holding the role loses it immediately: any permissions, colors, and channel overwrites tied to the role vanish. Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). Fails when the role does not exist or is above the client in the hierarchy. Dry-run by default.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -177,7 +177,7 @@ Permanently deletes a role from a guild. Every member holding the role loses it 
 
 _destructive_  
 
-Deletes a guild channel. ⚠️ WARNING: deleting a channel also deletes ALL threads inside it and permanently destroys its message history — there is no undo. The Sovereignty Guard applies: the client must own the guild or hold the #1 role. Set dry_run=false to actually delete the channel.
+Deletes a guild channel. ⚠️ WARNING: deleting a channel also deletes ALL threads inside it and permanently destroys its message history: there is no undo. The Sovereignty Guard applies: the client must own the guild or hold the #1 role. Set dry_run=false to actually delete the channel.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -225,7 +225,7 @@ Reports the acting identity used by every other tool: user ID, username, global 
 
 _destructive_  
 
-Edits an existing message: replace `content` (pass an EMPTY STRING to remove all text), swap the `embed`, or toggle `suppress_embeds`. NOTE: editing a message authored by another user fails with Discord error 20008 — the client can only edit its own messages. Example: { channel_id: "123", message_id: "456", content: "Updated text" }. dry_run defaults to true; no sovereignty guard applies.
+Edits an existing message: replace `content` (pass an EMPTY STRING to remove all text), swap the `embed`, or toggle `suppress_embeds`. NOTE: editing a message authored by another user fails with Discord error 20008: the client can only edit its own messages. Example: { channel_id: "123", message_id: "456", content: "Updated text" }. dry_run defaults to true; no sovereignty guard applies.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -233,7 +233,7 @@ Edits an existing message: replace `content` (pass an EMPTY STRING to remove all
 | `message_id` | string | **required** Discord snowflake ID of the message. |
 | `content` | optional string | New message content (max 2000 chars). Pass an empty string to remove all text. |
 | `embed` | optional object | Replacement embed. Omit to leave embeds unchanged. |
-| `suppress_embeds` | optional boolean | True to set SUPPRESS_EMBEDS on the message. Cannot reliably un-suppress without the full flag set. |
+| `suppress_embeds` | optional boolean | True to set SUPPRESS_EMBEDS on the message, false to clear it. Omit to leave flags unchanged. |
 | `reason` | optional string | Audit-log reason stamped on the action (appears in the server audit log). |
 | `dry_run` | optional boolean | When true (default), previews the effect and returns the exact API payload without executing. Set false to actually perform the operation. |
 
@@ -322,7 +322,7 @@ Fetches a single message by channel + message ID with full content, author, embe
 
 _destructive_  
 
-Removes a member from the guild. WARNING: the member can rejoin via any invite — use discord_ban_member to prevent re-entry. Example: { guild_id: "123", user_id: "456" }. Administrative: requires the sovereignty guard when dry_run=false.
+Removes a member from the guild. WARNING: the member can rejoin via any invite: use discord_ban_member to prevent re-entry. Example: { guild_id: "123", user_id: "456" }. Administrative: requires the sovereignty guard when dry_run=false.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -348,7 +348,7 @@ Lists the guilds (servers) the acting token can see, paginated. Each entry inclu
 
 _read-only_  
 
-Lists every role in a guild, ordered highest→lowest position (as returned by the API), paginated. Each entry shows the role id, name, position, color hex, hoist/mentionable/managed flags, and resolved permission names. Example: {"guild_id": "123456789012345678", "limit": 50}. Fails when the guild does not exist or the client cannot see it.
+Lists every role in a guild, ordered highest->lowest position (as returned by the API), paginated. Each entry shows the role id, name, position, color hex, hoist/mentionable/managed flags, and resolved permission names. Example: {"guild_id": "123456789012345678", "limit": 50}. Fails when the guild does not exist or the client cannot see it.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -484,7 +484,7 @@ Reorders roles in a guild by assigning each listed role a new position. IMPORTAN
 
 _read-only_  
 
-Read-only permission resolver. Given permission names → returns the combined bitfield (decimal string). Given a bitfield (decimal or 0x hex) → returns the resolved permission names. Given neither → returns the full catalog of every valid permission name with its bit value. Examples: {"permissions": ["ManageRoles", "KickMembers"]} → bitfield; {"bitfield": "8"} → ["KickMembers"]; {} → catalog. Fails on unknown permission names (the error lists every valid name) or a malformed bitfield.
+Read-only permission resolver. Given permission names -> returns the combined bitfield (decimal string). Given a bitfield (decimal or 0x hex) -> returns the resolved permission names. Given neither -> returns the full catalog of every valid permission name with its bit value. Examples: {"permissions": ["ManageRoles", "KickMembers"]} -> bitfield; {"bitfield": "8"} -> ["KickMembers"]; {} -> catalog. Fails on unknown permission names (the error lists every valid name) or a malformed bitfield.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -497,7 +497,7 @@ Read-only permission resolver. Given permission names → returns the combined b
 
 _destructive_  
 
-Builds a full server structure from a canonical template in one call: role ladder (Member lowest → Moderator → Administrator top), categories, channels (text, voice, announcement, forum) and permission overwrites. Roles are created lowest-first so each new role lands above the previous one. Sovereign control is asserted once before the first step; every step is executed individually and partial failures are reported honestly. Templates: minimal, community (default), gaming, support. Set dry_run=false to apply.
+Builds a full server structure from a canonical template in one call: role ladder (Member lowest -> Moderator -> Administrator top), categories, channels (text, voice, announcement, forum) and permission overwrites. Roles are created lowest-first so each new role lands above the previous one. Sovereign control is asserted once before the first step; every step is executed individually and partial failures are reported honestly. Templates: minimal, community (default), gaming, support. Set dry_run=false to apply.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -526,7 +526,7 @@ Searches guild members by username or nickname (1-32 characters, case-insensitiv
 
 _destructive_  
 
-Sends a message to a channel: plain text content, a rich embed, or both. At least one of `content` or `embed` is required. Use for announcements, replies, or structured notifications. Example: { channel_id: "123", content: "Hello!", embed: { title: "Deploy", description: "Done", color: "#2ecc71" } }. dry_run defaults to true; no sovereignty guard applies — messaging is not an administrative action.
+Sends a message to a channel: plain text content, a rich embed, or both. At least one of `content` or `embed` is required. Use for announcements, replies, or structured notifications. Example: { channel_id: "123", content: "Hello!", embed: { title: "Deploy", description: "Done", color: "#2ecc71" } }. dry_run defaults to true; no sovereignty guard applies: messaging is not an administrative action.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -542,7 +542,7 @@ Sends a message to a channel: plain text content, a rich embed, or both. At leas
 ### discord_set_permission_overwrite
 
 
-Creates or replaces the permission overwrite for a role or member on a channel. Overwrites follow Discord precedence: @everyone → role → member. Provide permission names in allow and/or deny (e.g. ManageRoles, ViewChannel, SendMessages). The Sovereignty Guard applies: the client must own the guild or hold the #1 role. Set dry_run=false to apply.
+Creates or replaces the permission overwrite for a role or member on a channel. Overwrites follow Discord precedence: @everyone -> role -> member. Provide permission names in allow and/or deny (e.g. ManageRoles, ViewChannel, SendMessages). The Sovereignty Guard applies: the client must own the guild or hold the #1 role. Set dry_run=false to apply.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -595,7 +595,7 @@ Modifies an existing guild: name, description, verification level (0-4), default
 ### discord_update_role
 
 
-Modifies an existing role: name, permissions, color, hoist, mentionable, icon (data URI), or unicode_emoji. IMPORTANT: when permissions is provided it REPLACES the role's entire permission set — omit it to leave permissions untouched. Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "name": "Senior Mod", "color": "#f1c40f", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). Fails on unknown permission names, invalid colors, or roles above the client in the hierarchy. Dry-run by default.
+Modifies an existing role: name, permissions, color, hoist, mentionable, icon (data URI), or unicode_emoji. IMPORTANT: when permissions is provided it REPLACES the role's entire permission set: omit it to leave permissions untouched. Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "name": "Senior Mod", "color": "#f1c40f", "dry_run": false}. Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). Fails on unknown permission names, invalid colors, or roles above the client in the hierarchy. Dry-run by default.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -634,7 +634,7 @@ Updates one or more properties of a guild channel (name, topic, position, parent
 
 _destructive, idempotent_  
 
-Updates a guild member: nickname, roles and/or timeout. WARNING: `roles` REPLACES the member's ENTIRE role set — pass every role ID the member should have, or omit `roles` to leave roles untouched. `nick` may be an empty string to clear the nickname. `timeout_minutes` is 1-40320 (28 days max); 0 removes an active timeout. Cannot mute or deafen the member in voice — that requires a gateway connection, not this endpoint. Administrative: requires the sovereignty guard when dry_run=false. Example: { guild_id: "123", user_id: "456", nick: "new name", timeout_minutes: 30 }.
+Updates a guild member: nickname, roles and/or timeout. WARNING: `roles` REPLACES the member's ENTIRE role set: pass every role ID the member should have, or omit `roles` to leave roles untouched. `nick` may be an empty string to clear the nickname. `timeout_minutes` is 1-40320 (28 days max); 0 removes an active timeout. Cannot mute or deafen the member in voice: that requires a gateway connection, not this endpoint. Administrative: requires the sovereignty guard when dry_run=false. Example: { guild_id: "123", user_id: "456", nick: "new name", timeout_minutes: 30 }.
 
 | Parameter | Type | Description |
 | --- | --- | --- |

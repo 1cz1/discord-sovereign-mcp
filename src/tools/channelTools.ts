@@ -43,7 +43,7 @@ function isDryRun(p: { dry_run?: unknown }): boolean {
   return p.dry_run !== false;
 }
 
-/** Guild channels (APIChannel minus DM variants — these carry guild_id and parent_id). */
+/** Guild channels (APIChannel minus DM variants: these carry guild_id and parent_id). */
 type GuildChannel = Extract<APIChannel, { guild_id?: string }>;
 
 function isGuildChannel(c: APIChannel): c is GuildChannel {
@@ -61,7 +61,7 @@ async function requireGuildChannel(ctx: ToolContext, channelId: string): Promise
 
 function dryRunResult(description: string, wouldExecute: Record<string, unknown>): MCPResult {
   return ok(
-    `🔍 DRY RUN — no changes made. ${description}\n\`\`\`json\n${JSON.stringify(wouldExecute, null, 2)}\n\`\`\``,
+    `🔍 DRY RUN: no changes made. ${description}\n\`\`\`json\n${JSON.stringify(wouldExecute, null, 2)}\n\`\`\``,
     { dry_run: true, would_execute: wouldExecute }
   );
 }
@@ -132,7 +132,7 @@ const listChannels: RegisteredTool = {
       const ch = entry.channel;
       if (entry.kind === 'channel' && ch.type === ChannelType.GuildCategory) {
         lines.push(
-          `\n**📁 ${ch.name ?? '(unnamed)'}** \`${ch.id}\` — category · ${childCounts.get(ch.id) ?? 0} child channel(s)`
+          `\n**📁 ${ch.name ?? '(unnamed)'}** \`${ch.id}\`: category · ${childCounts.get(ch.id) ?? 0} child channel(s)`
         );
       } else if (entry.kind === 'thread') {
         lines.push(`  🧵 ${fmtChannel(ch)} · thread in \`${ch.parent_id ?? '?'}\``);
@@ -142,7 +142,7 @@ const listChannels: RegisteredTool = {
       }
     }
     if (page.page.has_more) {
-      lines.push(`\nMore results available — use offset=${page.page.next_offset} to fetch the next page.`);
+      lines.push(`\nMore results available: use offset=${page.page.next_offset} to fetch the next page.`);
     }
 
     const channelEntry = (ch: GuildChannel, thread: boolean) => ({
@@ -428,7 +428,7 @@ const deleteChannel: RegisteredTool = {
   title: 'Delete channel',
   description:
     'Deletes a guild channel. ⚠️ WARNING: deleting a channel also deletes ALL threads inside it and permanently destroys its ' +
-    'message history — there is no undo. The Sovereignty Guard applies: the client must own the guild or hold the #1 role. ' +
+    'message history: there is no undo. The Sovereignty Guard applies: the client must own the guild or hold the #1 role. ' +
     'Set dry_run=false to actually delete the channel.',
   inputSchema: deleteChannelSchema,
   annotations: { destructiveHint: true },
@@ -438,7 +438,7 @@ const deleteChannel: RegisteredTool = {
     const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(
-        `Would permanently delete channel #${channel.name ?? channel.id} — including its threads and message history.`,
+        `Would permanently delete channel #${channel.name ?? channel.id}: including its threads and message history.`,
         {
           endpoint: 'DELETE /channels/{channel_id}',
           method: 'DELETE',
@@ -478,7 +478,7 @@ const createThreadSchema = z
     message_id: messageIdSchema
       .optional()
       .describe(
-        'Optional starter message ID. For forum channels the post starter is required — pass the starter message ID here; it is forwarded to the thread creation payload.'
+        'Optional starter message ID. For forum channels the post starter is required: pass the starter message ID here; it is forwarded to the thread creation payload.'
       ),
     type: z
       .enum(['public_thread', 'private_thread'])
@@ -581,13 +581,13 @@ const setPermissionOverwrite: RegisteredTool = {
   title: 'Set permission overwrite',
   description:
     'Creates or replaces the permission overwrite for a role or member on a channel. Overwrites follow Discord precedence: ' +
-    '@everyone → role → member. Provide permission names in allow and/or deny (e.g. ManageRoles, ViewChannel, SendMessages). ' +
+    '@everyone -> role -> member. Provide permission names in allow and/or deny (e.g. ManageRoles, ViewChannel, SendMessages). ' +
     'The Sovereignty Guard applies: the client must own the guild or hold the #1 role. Set dry_run=false to apply.',
   inputSchema: setPermissionOverwriteSchema,
   handle: async (params: ToolInput, ctx: ToolContext): Promise<MCPResult> => {
     const p = params as unknown as SetPermissionOverwriteInput;
     if ((p.allow ?? []).length === 0 && (p.deny ?? []).length === 0) {
-      return fail('Provide at least one permission in allow or deny — an overwrite with neither is rejected by Discord.');
+      return fail('Provide at least one permission in allow or deny: an overwrite with neither is rejected by Discord.');
     }
     const channel = await requireGuildChannel(ctx, p.channel_id);
     const { allow, deny } = buildOverwriteBody(p.allow, p.deny);
@@ -700,7 +700,7 @@ const calculatePermissions: RegisteredTool = {
   title: 'Calculate member permissions',
   description:
     'Read-only. Computes the effective permission set of a member in a guild, following Discord precedence: ' +
-    'owner bypass → Administrator → @everyone + role permissions → channel @everyone/role/member overwrites. ' +
+    'owner bypass -> Administrator -> @everyone + role permissions -> channel @everyone/role/member overwrites. ' +
     'Pass channel_id to include channel overwrites. Use this before acting to predict what a member can actually do.',
   inputSchema: calculatePermissionsSchema,
   annotations: { readOnlyHint: true },
@@ -824,7 +824,7 @@ const auditPermissions: RegisteredTool = {
     }
 
     const lines = [
-      `**Permission audit** — ${guild.name} \`${p.guild_id}\``,
+      `**Permission audit**: ${guild.name} \`${p.guild_id}\``,
       `Acting as <@${me.id}> · owner: ${isOwner ? 'yes' : 'no'} · guild-level administrator: ${baseAdministrator ? 'yes' : 'no'}`,
       truncated
         ? `Showing the first ${max} of ${channels.length} channels (truncated).`

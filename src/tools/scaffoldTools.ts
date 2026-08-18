@@ -38,7 +38,7 @@ const scaffoldServer: RegisteredTool = {
   name: 'discord_scaffold_server',
   title: 'Scaffold a server',
   description:
-    'Builds a full server structure from a canonical template in one call: role ladder (Member lowest → Moderator → ' +
+    'Builds a full server structure from a canonical template in one call: role ladder (Member lowest -> Moderator -> ' +
     'Administrator top), categories, channels (text, voice, announcement, forum) and permission overwrites. ' +
     'Roles are created lowest-first so each new role lands above the previous one. Sovereign control is asserted once ' +
     'before the first step; every step is executed individually and partial failures are reported honestly. ' +

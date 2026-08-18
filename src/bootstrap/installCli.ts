@@ -3,7 +3,7 @@
  * Claude Code, Claude Desktop, Codex, opencode, Cursor, Windsurf, Continue,
  * Google Antigravity and VS Code.
  *
- * JSON configs are merged in place (idempotent — re-running is a no-op) with a
+ * JSON configs are merged in place (idempotent: re-running is a no-op) with a
  * timestamped .bak backup of the original file. Codex's TOML config gets a single
  * [mcp_servers.discord-sovereign] block appended once.
  *
@@ -299,7 +299,7 @@ async function pickTargets(
   try {
     if (detected.length > 0) {
       console.log('\nDetected client configs:');
-      detected.forEach((t, i) => console.log(`  [${i + 1}] ${t.label} (${t.scope}) — ${shorten(t.path)}`));
+      detected.forEach((t, i) => console.log(`  [${i + 1}] ${t.label} (${t.scope}): ${shorten(t.path)}`));
       const answer = (await rl.question('\nInstall into all detected configs? [Y/n]: ')).trim().toLowerCase();
       let chosen: ClientTarget[];
       if (answer === 'n' || answer === 'no') {
@@ -394,7 +394,7 @@ export async function runInstaller(
   if (!token) {
     token = 'your-bot-or-oauth2-token';
     console.warn(
-      '\nNo token provided — writing a placeholder. Set DISCORD_TOKEN in .env, paste one into the ' +
+      '\nNo token provided: writing a placeholder. Set DISCORD_TOKEN in .env, paste one into the ' +
         'configs, or run `npx discord-sovereign-mcp --oauth` for a user token.'
     );
   }
@@ -415,7 +415,7 @@ export async function runInstaller(
         skipped.push(`${target.label}: already configured (${shorten(target.path)})`);
         continue;
       }
-      console.log(`${verb} ${target.label} → ${shorten(target.path)}`);
+      console.log(`${verb} ${target.label} -> ${shorten(target.path)}`);
       if (!opts.dryRun) {
         backup(target.path);
         mkdirSync(dirname(target.path), { recursive: true });
@@ -433,7 +433,7 @@ export async function runInstaller(
         }
       }
       const next = mergeJsonConfig(existing, target.key, SERVER_KEY, def);
-      console.log(`${verb} ${target.label} → ${shorten(target.path)}`);
+      console.log(`${verb} ${target.label} -> ${shorten(target.path)}`);
       if (!opts.dryRun) {
         backup(target.path);
         mkdirSync(dirname(target.path), { recursive: true });
@@ -472,7 +472,7 @@ function backup(path: string): void {
   const backupPath = `${path}.${stamp}.bak`;
   try {
     writeFileSync(backupPath, readFileSync(path, 'utf8'), 'utf8');
-    console.log(`  backed up → ${shorten(backupPath)}`);
+    console.log(`  backed up -> ${shorten(backupPath)}`);
   } catch {
     // backup is best-effort; never block the install over it
   }

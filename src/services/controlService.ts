@@ -57,7 +57,7 @@ function sortLadder(roles: APIRole[]): APIRole[] {
  * The Sovereignty Guard. Every mutating operation must pass assertControl():
  * the client only acts when it is the guild owner (user mode) or holds the
  * #1 (highest) role in the role hierarchy (bot mode). Role POSITION, not
- * permission flags, decides hierarchy on Discord — this is the single most
+ * permission flags, decides hierarchy on Discord: this is the single most
  * common cause of "Missing Permissions" failures in LLM-driven admin bots.
  */
 export class ControlService {
@@ -121,7 +121,7 @@ export class ControlService {
         note: null,
       }),
       note: isOwner
-        ? 'The client owns this guild (user token) — full control granted.'
+        ? 'The client owns this guild (user token): full control granted.'
         : controlled
           ? `The client's highest role "@${clientRole!.name}" is the #1 role.`
           : 'The client does not hold the #1 role. Destructive and administrative operations are blocked.',
@@ -147,7 +147,7 @@ export class ControlService {
   /**
    * Reorders the client's role to the top of the hierarchy.
    * Legally only possible when the client already outranks every role it is
-   * moving above — the API enforces this. Never fails silently.
+   * moving above: the API enforces this. Never fails silently.
    */
   async elevateControl(guildId: string): Promise<ControlVerdict> {
     const verdict = await this.getVerdict(guildId);
@@ -169,7 +169,7 @@ export class ControlService {
     } catch (err) {
       const info = describeDiscordError(err);
       throw new Error(
-        `Could not elevate: ${info.message} — the client role may not outrank the roles above it. ` +
+        `Could not elevate: ${info.message}: the client role may not outrank the roles above it. ` +
           'Ask a human to drag the role to the top in Server Settings > Roles, or grant the client a higher position manually.'
       );
     }

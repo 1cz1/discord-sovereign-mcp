@@ -1,10 +1,10 @@
 # Installing discord-sovereign-mcp
 
-The server runs from `npx` — no install step, no build step, nothing to keep updated.
+The server runs from `npx`: no install step, no build step, nothing to keep updated.
 
 ## The one-liner
 
-Run this in the terminal (any directory is fine — it scans both project and user configs):
+Run this in the terminal (any directory is fine: it scans both project and user configs):
 
 ```bash
 npx discord-sovereign-mcp@latest --install
@@ -54,7 +54,7 @@ The installer resolves the token in this order:
 5. The placeholder `your-bot-or-oauth2-token` (config still works once you fill it in)
 
 A token you paste is written to `.env` as `DISCORD_TOKEN=...`; add
-`DISCORD_TOKEN_TYPE=auto` is not needed — auto-detection handles bot and user tokens.
+`DISCORD_TOKEN_TYPE=auto` is not needed: auto-detection handles bot and user tokens.
 
 ## What gets written
 
@@ -89,16 +89,16 @@ ready-made config for your client from [`examples/mcp/`](../examples/mcp/) and r
 
 ## Getting a token
 
-- **Bot token** — create an application at [discord.com/developers/applications](https://discord.com/developers/applications),
+- **Bot token**: create an application at [discord.com/developers/applications](https://discord.com/developers/applications),
   add a bot, copy the token. Bot tokens cannot create/delete guilds.
-- **User token (OAuth2)** — run `npx discord-sovereign-mcp --oauth`, authorize in the browser,
+- **User token (OAuth2)**: run `npx discord-sovereign-mcp --oauth`, authorize in the browser,
   and the token is persisted to `.env` automatically. User tokens can do everything, including
   server creation.
 
 ## After installing
 
 1. Restart your AI client.
-2. Ask it to run `discord_whoami` — it reports which account is acting and whether it is bot or
+2. Ask it to run `discord_whoami`: it reports which account is acting and whether it is bot or
    user mode.
 3. Optionally restrict blast radius: set `DISCORD_ALLOWED_GUILDS` to the comma-separated IDs of
    the servers the agent may touch. Every tool then refuses guilds outside the list.

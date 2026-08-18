@@ -291,7 +291,7 @@ export const memberTools: RegisteredTool[] = [
     name: 'discord_update_member',
     title: 'Update guild member',
     description:
-      'Updates a guild member: nickname, roles and/or timeout. WARNING: `roles` REPLACES the member\'s ENTIRE role set — pass every role ID the member should have, or omit `roles` to leave roles untouched. `nick` may be an empty string to clear the nickname. `timeout_minutes` is 1-40320 (28 days max); 0 removes an active timeout. Cannot mute or deafen the member in voice — that requires a gateway connection, not this endpoint. Administrative: requires the sovereignty guard when dry_run=false. Example: { guild_id: "123", user_id: "456", nick: "new name", timeout_minutes: 30 }.',
+      'Updates a guild member: nickname, roles and/or timeout. WARNING: `roles` REPLACES the member\'s ENTIRE role set: pass every role ID the member should have, or omit `roles` to leave roles untouched. `nick` may be an empty string to clear the nickname. `timeout_minutes` is 1-40320 (28 days max); 0 removes an active timeout. Cannot mute or deafen the member in voice: that requires a gateway connection, not this endpoint. Administrative: requires the sovereignty guard when dry_run=false. Example: { guild_id: "123", user_id: "456", nick: "new name", timeout_minutes: 30 }.',
     inputSchema: z
       .object({
         guild_id: guildIdSchema,
@@ -449,7 +449,7 @@ export const memberTools: RegisteredTool[] = [
     name: 'discord_kick_member',
     title: 'Kick member',
     description:
-      'Removes a member from the guild. WARNING: the member can rejoin via any invite — use discord_ban_member to prevent re-entry. Example: { guild_id: "123", user_id: "456" }. Administrative: requires the sovereignty guard when dry_run=false.',
+      'Removes a member from the guild. WARNING: the member can rejoin via any invite: use discord_ban_member to prevent re-entry. Example: { guild_id: "123", user_id: "456" }. Administrative: requires the sovereignty guard when dry_run=false.',
     inputSchema: z
       .object({
         guild_id: guildIdSchema,
@@ -642,7 +642,7 @@ export const memberTools: RegisteredTool[] = [
     name: 'discord_send_message',
     title: 'Send message',
     description:
-      'Sends a message to a channel: plain text content, a rich embed, or both. At least one of `content` or `embed` is required. Use for announcements, replies, or structured notifications. Example: { channel_id: "123", content: "Hello!", embed: { title: "Deploy", description: "Done", color: "#2ecc71" } }. dry_run defaults to true; no sovereignty guard applies — messaging is not an administrative action.',
+      'Sends a message to a channel: plain text content, a rich embed, or both. At least one of `content` or `embed` is required. Use for announcements, replies, or structured notifications. Example: { channel_id: "123", content: "Hello!", embed: { title: "Deploy", description: "Done", color: "#2ecc71" } }. dry_run defaults to true; no sovereignty guard applies: messaging is not an administrative action.',
     inputSchema: z
       .object({
         channel_id: channelIdSchema,
@@ -737,7 +737,7 @@ export const memberTools: RegisteredTool[] = [
 
       const cursorCount = [before, after, around].filter((c) => c !== undefined).length;
       if (cursorCount > 1) {
-        return fail('`before`, `after` and `around` are mutually exclusive — pass at most one.');
+        return fail('`before`, `after` and `around` are mutually exclusive: pass at most one.');
       }
       if (around !== undefined && limit > 100) {
         return fail('`around` with `limit` above 100 is invalid.');
@@ -812,7 +812,7 @@ export const memberTools: RegisteredTool[] = [
     name: 'discord_edit_message',
     title: 'Edit message',
     description:
-      'Edits an existing message: replace `content` (pass an EMPTY STRING to remove all text), swap the `embed`, or toggle `suppress_embeds`. NOTE: editing a message authored by another user fails with Discord error 20008 — the client can only edit its own messages. Example: { channel_id: "123", message_id: "456", content: "Updated text" }. dry_run defaults to true; no sovereignty guard applies.',
+      'Edits an existing message: replace `content` (pass an EMPTY STRING to remove all text), swap the `embed`, or toggle `suppress_embeds`. NOTE: editing a message authored by another user fails with Discord error 20008: the client can only edit its own messages. Example: { channel_id: "123", message_id: "456", content: "Updated text" }. dry_run defaults to true; no sovereignty guard applies.',
     inputSchema: z
       .object({
         channel_id: channelIdSchema,
@@ -1001,7 +1001,7 @@ export const memberTools: RegisteredTool[] = [
       const channel = await ctx.client.getChannel(channelId);
       const guildId = 'guild_id' in channel ? channel.guild_id : undefined;
       if (!guildId) {
-        return fail(`Channel ${channelId} is not a guild channel — cannot resolve the guild for the sovereignty guard.`);
+        return fail(`Channel ${channelId} is not a guild channel: cannot resolve the guild for the sovereignty guard.`);
       }
       await ctx.control.assertControl(guildId);
 

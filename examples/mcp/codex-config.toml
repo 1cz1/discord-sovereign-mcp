@@ -1,4 +1,4 @@
-# Codex CLI — ~/.codex/config.toml (user scope) or .codex/config.toml (project scope)
+# Codex CLI: ~/.codex/config.toml (user scope) or .codex/config.toml (project scope)
 # Docs: https://github.com/openai/codex/blob/main/docs/config.md
 model = "gpt-5.2-codex"
 

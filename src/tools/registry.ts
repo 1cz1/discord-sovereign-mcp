@@ -34,7 +34,7 @@ export interface RegisteredTool {
     idempotentHint?: boolean;
     openWorldHint?: boolean;
   };
-  /** Executes the tool. Return ok(...) or fail(...) — never throw. */
+  /** Executes the tool. Return ok(...) or fail(...): never throw. */
   handle: (params: ToolInput, ctx: ToolContext) => Promise<MCPResult>;
 }
 

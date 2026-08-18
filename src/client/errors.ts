@@ -73,7 +73,7 @@ export function describeDiscordError(err: unknown): DiscordErrorInfo {
     const status = typeof asRecord.status === 'number' ? asRecord.status : null;
     const raw = String(asRecord.message ?? '');
     const hint = CODE_HINTS[code];
-    const text = hint ? `${raw}. ${hint}` : `${raw}${status === 429 ? ' (rate limited — retry shortly)' : ''}`;
+    const text = hint ? `${raw}. ${hint}` : `${raw}${status === 429 ? ' (rate limited: retry shortly)' : ''}`;
     return { message: text, code: Number.isFinite(code) ? code : null, status, raw };
   }
   if (err instanceof Error) {

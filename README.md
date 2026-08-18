@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  Full-lifecycle Discord MCP server for any LLM — gated by a <b>Sovereignty Guard</b> that only
+  Full-lifecycle Discord MCP server for any LLM: gated by a <b>Sovereignty Guard</b> that only
   mutates when the client holds the <b>#1 (highest) role</b> in the guild's role hierarchy.
 </p>
 
@@ -33,23 +33,23 @@ npx discord-sovereign-mcp@latest --install
 ```
 
 That's it. The installer wires the server into **Claude Code, Claude Desktop, Codex, opencode,
-Cursor, Windsurf, Continue, Google Antigravity, and VS Code** — interactive picker by default,
+Cursor, Windsurf, Continue, Google Antigravity, and VS Code**: interactive picker by default,
 `--all` if you want everything, backups before every write, idempotent on re-run.
 
-- `npx discord-sovereign-mcp@latest --install --all` — every client, no prompts
-- `npx discord-sovereign-mcp@latest --install --client codex,opencode --dry-run` — preview
+- `npx discord-sovereign-mcp@latest --install --all`: every client, no prompts
+- `npx discord-sovereign-mcp@latest --install --client codex,opencode --dry-run`: preview
 - Full guide: [docs/INSTALL.md](./docs/INSTALL.md)
 
 Prefer manual setup? Copy the ready-made config for your client from
-[examples/mcp/](./examples/mcp) — every file, every client, the same `npx` invocation.
+[examples/mcp/](./examples/mcp): every file, every client, the same `npx` invocation.
 
 ## What you get
 
-- **46 tools** across control, guilds, channels, members, scaffolding, and OAuth — snake_case,
+- **46 tools** across control, guilds, channels, members, scaffolding, and OAuth: snake_case,
   `discord_`-prefixed, schema-strict, documented in [TOOLS.md](./TOOLS.md).
-- **Sovereign Control Guard** — every destructive tool is `dry_run` by default and must pass
+- **Sovereign Control Guard**: every destructive tool is `dry_run` by default and must pass
   `discord_assert_sovereignty` before executing with `dry_run: false`, enforced server-side.
-- **One-shot server scaffolding** — `discord_scaffold_server` builds roles, categories, channels,
+- **One-shot server scaffolding**: `discord_scaffold_server` builds roles, categories, channels,
   and permission overwrites from a declarative template (minimal / community / gaming / support).
 - **OAuth2 bootstrap** for user-token mode (`--oauth`) and **safety rails**: guild allowlist,
   audit-log reasons, idempotency checks, and `dry_run` previews that return the exact API payload.
@@ -70,23 +70,23 @@ npm run build
 npm test                    # 80 unit tests
 ```
 
-### Token setup — bot (recommended for servers you own)
+### Token setup: bot (recommended for servers you own)
 
 1. Create an application at <https://discord.com/developers/applications>.
 2. Under **Bot**: create the bot, copy the token, enable **SERVER MEMBERS INTENT** and
    **MESSAGE CONTENT INTENT**.
-3. Under **OAuth2 → URL Generator**: scope `bot`, permissions `Administrator`, invite the bot to
+3. Under **OAuth2 -> URL Generator**: scope `bot`, permissions `Administrator`, invite the bot to
    your server. (Administrator is required for server-scoped operations; the guard still enforces
    role position.)
-4. `DISCORD_TOKEN=<token>` in `.env` — `DISCORD_TOKEN_TYPE=auto` detects bot vs user.
+4. `DISCORD_TOKEN=<token>` in `.env`: `DISCORD_TOKEN_TYPE=auto` detects bot vs user.
 
-### Token setup — user token via OAuth2
+### Token setup: user token via OAuth2
 
-1. Create an application; under **OAuth2 → General** add a redirect
+1. Create an application; under **OAuth2 -> General** add a redirect
    `http://localhost:8788/callback`.
 2. Set `DISCORD_OAUTH2_CLIENT_ID`, `DISCORD_OAUTH2_CLIENT_SECRET`,
    `DISCORD_OAUTH2_REDIRECT_URI` in `.env`.
-3. `npx discord-sovereign-mcp@latest --oauth` — opens the authorization URL, waits for the
+3. `npx discord-sovereign-mcp@latest --oauth`: opens the authorization URL, waits for the
    callback, and writes the user token into `.env` (`DISCORD_TOKEN_TYPE=oauth2`).
 
 ### Run
@@ -99,14 +99,14 @@ TRANSPORT=http npm run start    # HTTP transport (POST /mcp, GET /health)
 
 ## The Sovereignty Guard
 
-- `discord_assert_sovereignty` — read-only verdict: prints the full role ladder with positions and
+- `discord_assert_sovereignty`: read-only verdict: prints the full role ladder with positions and
   flags the client role. Controlled = client owns the guild (user mode) **or** holds the #1 role
   (bot mode).
-- `discord_elevate_control` — moves the client role to the top of the ladder, then re-verifies.
+- `discord_elevate_control`: moves the client role to the top of the ladder, then re-verifies.
   Never fails silently: if the API rejects the reorder, the error explains that a human must drag
   the role above the roles it couldn't outrank.
 - Every destructive tool runs the same gate (`assertControl`) before its first mutating call when
-  `dry_run: false` — awaited server-side, so a guard failure can never be dropped.
+  `dry_run: false`: awaited server-side, so a guard failure can never be dropped.
 
 ## Scaffolding
 
@@ -120,8 +120,8 @@ TRANSPORT=http npm run start    # HTTP transport (POST /mcp, GET /health)
 }
 ```
 
-It executes in safe order — roles lowest-first, then categories, then channels (with parent
-wiring), then permission overwrites — guarding **once** before the first step. Each step is
+It executes in safe order: roles lowest-first, then categories, then channels (with parent
+wiring), then permission overwrites, guarding **once** before the first step. Each step is
 isolated: on failure the tool returns `steps_total / steps_completed / steps_failed` plus the
 already-created role/channel IDs so a partial scaffold can be reconciled by hand.
 
@@ -129,13 +129,13 @@ already-created role/channel IDs so a partial scaffold can be reconciled by hand
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `DISCORD_TOKEN` | — | Bot or OAuth2 user token (required). |
+| `DISCORD_TOKEN` | none | Bot or OAuth2 user token (required). |
 | `DISCORD_TOKEN_TYPE` | `auto` | `auto` \| `bot` \| `oauth2` \| `user`. `auto` detects bot vs user from the token. |
-| `DISCORD_ALLOWED_GUILDS` | *(empty = all)* | Comma-separated guild IDs. When set, every tool refuses guilds outside the list — even if sovereignty is held. |
+| `DISCORD_ALLOWED_GUILDS` | *(empty = all)* | Comma-separated guild IDs. When set, every tool refuses guilds outside the list, even if sovereignty is held. |
 | `TRANSPORT` | `stdio` | `stdio` \| `http`. |
 | `HTTP_HOST` / `HTTP_PORT` | `127.0.0.1` / `3000` | HTTP transport bind address/port. |
-| `DISCORD_OAUTH2_CLIENT_ID` | — | OAuth2 application client ID. |
-| `DISCORD_OAUTH2_CLIENT_SECRET` | — | OAuth2 application client secret. |
+| `DISCORD_OAUTH2_CLIENT_ID` | none | OAuth2 application client ID. |
+| `DISCORD_OAUTH2_CLIENT_SECRET` | none | OAuth2 application client secret. |
 | `DISCORD_OAUTH2_REDIRECT_URI` | `http://localhost:8788/callback` | Must match the redirect registered in the Discord developer portal. |
 | `DISCORD_OAUTH2_PORT` | `8788` | Local callback port used by `--oauth`. |
 | `AUDIT_REASON` | `via discord-sovereign-mcp` | Audit-log reason stamped on actions. |
@@ -146,7 +146,7 @@ already-created role/channel IDs so a partial scaffold can be reconciled by hand
 | Client | Config file | Where it goes |
 | --- | --- | --- |
 | Claude Code | `claude-code.json` | `.mcp.json` at the repo root (or `~/.claude.json`) |
-| Claude Desktop | `claude-desktop-config.json` | menu: Claude → Settings → Developer |
+| Claude Desktop | `claude-desktop-config.json` | menu: Claude -> Settings -> Developer |
 | Codex CLI | `codex-config.toml` | `~/.codex/config.toml` (user) or `.codex/config.toml` (project) |
 | opencode | `opencode.json` | `opencode.json` in the project (or `~/.config/opencode/`) |
 | Cursor | `cursor-mcp.json` | `.cursor/mcp.json` |
@@ -169,12 +169,12 @@ npm run eval        # offline registry checks (add --live for protocol checks)
 
 ## Docs
 
-- [TOOLS.md](./TOOLS.md) — full reference for all 46 tools (generated).
-- [docs/INSTALL.md](./docs/INSTALL.md) — the installer: flags, token resolution, what gets written.
-- [docs/SPEC.md](./docs/SPEC.md) — design spec: architecture, threat model, guard semantics, tool contracts.
-- [docs/RECIPES.md](./docs/RECIPES.md) — end-to-end recipes for common workflows.
-- [SECURITY.md](./SECURITY.md) — threat model, token handling, and reporting policy.
+- [TOOLS.md](./TOOLS.md): full reference for all 46 tools (generated).
+- [docs/INSTALL.md](./docs/INSTALL.md): the installer: flags, token resolution, what gets written.
+- [docs/SPEC.md](./docs/SPEC.md): design spec: architecture, threat model, guard semantics, tool contracts.
+- [docs/RECIPES.md](./docs/RECIPES.md): end-to-end recipes for common workflows.
+- [SECURITY.md](./SECURITY.md): threat model, token handling, and reporting policy.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT: see [LICENSE](./LICENSE).

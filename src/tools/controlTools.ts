@@ -16,7 +16,7 @@ const assertSovereigntySchema = z
 
 function ladderTable(verdict: import('../services/controlService.js').ControlVerdict): string {
   const rows = verdict.ladder.map(
-    (r) => `- ${r.isClient ? '**' : ''}${r.isEveryone ? '@everyone' : `@${r.name}`}${r.isClient ? '** (client)' : ''} — pos ${r.position}`
+    (r) => `- ${r.isClient ? '**' : ''}${r.isEveryone ? '@everyone' : `@${r.name}`}${r.isClient ? '** (client)' : ''} (pos ${r.position})`
   );
   return rows.length > 0 ? rows.join('\n') : '- (no roles)';
 }
@@ -41,7 +41,7 @@ const assertSovereignty: RegisteredTool = {
         verdict.note ?? '',
         verdict.remediation ?? '',
         '',
-        '**Role ladder (highest → lowest):**',
+        '**Role ladder (highest -> lowest):**',
         ladderTable(verdict),
       ]
         .filter((l) => l.length > 0)
@@ -91,7 +91,7 @@ const elevateControl: RegisteredTool = {
       if (isDryRun) {
         const text =
           verdict.mode === 'owner'
-            ? 'The client owns this guild — elevation is unnecessary.'
+            ? 'The client owns this guild: elevation is unnecessary.'
             : verdict.controlled
               ? `Control already granted: the client's highest role "@${verdict.clientRole?.name}" is the #1 role.`
               : `Would move the client role "@${verdict.clientRole?.name}" (pos ${verdict.clientRole?.position}) ` +
@@ -109,7 +109,7 @@ const elevateControl: RegisteredTool = {
       return ok(
         result.controlled
           ? `Control elevated: the client role "@${result.clientRole?.name}" now sits at position ${result.topRole?.position} (the #1 role).`
-          : 'Elevation did not change the hierarchy — see the structured verdict for the current ladder.',
+          : 'Elevation did not change the hierarchy: see the structured verdict for the current ladder.',
         {
           guild_id: p.guild_id,
           controlled: result.controlled,

@@ -39,7 +39,7 @@ const typeOf = (schema: z.ZodTypeAny): string => {
 const lines: string[] = [];
 lines.push('# TOOLS.md');
 lines.push('');
-lines.push(`Auto-generated from the tool registry — ${tools.length} tools. Regenerate with ` +
+lines.push(`Auto-generated from the tool registry: ${tools.length} tools. Regenerate with ` +
   '`npx tsx scripts/gen-tools-doc.ts`.');
 lines.push('');
 lines.push('Every tool is `discord_`-prefixed, snake_case, and schema-strict (unknown keys are rejected). ' +

@@ -9,7 +9,7 @@ Design specification for discord-sovereign-mcp (v0.1).
   server scaffolding.
 - Make destructive operations safe-by-default: `dry_run` previews on every mutating tool and a
   **Sovereignty Guard** that blocks execution unless the client provably holds the top role.
-- Fail loudly and helpfully: every failure is a structured, actionable message — never a raw
+- Fail loudly and helpfully: every failure is a structured, actionable message: never a raw
   stack trace.
 
 ## 2. Non-goals
@@ -34,7 +34,7 @@ src/tools/*         46 RegisteredTools (zod-strict schemas, annotations, handle(
    ▼
 src/services/*      controlService (sovereignty verdicts)
                     permissionService (bitfields, role colors, overwrite math)
-                    scaffoldService (template → plan → steps)
+                    scaffoldService (template -> plan -> steps)
                     oauthService (authorize/exchange/persist)
    ▼
 src/client/*        discordClient (typed @discordjs/rest wrappers), errors (translator)
@@ -76,23 +76,23 @@ Same flow with the guard surfaced explicitly:
 | `src/client/errors.ts` | Translate REST/network errors into actionable `describeDiscordError` strings. |
 | `src/services/controlService.ts` | `getVerdict` / `assertControl` / `elevateControl`; ladder sorting by position then id. |
 | `src/services/permissionService.ts` | Bitfield parsing/serialization, named permissions, role colors, overwrite evaluation. |
-| `src/services/scaffoldService.ts` | Templates → validated plan → ordered steps; parent wiring; overwrite resolution. |
+| `src/services/scaffoldService.ts` | Templates -> validated plan -> ordered steps; parent wiring; overwrite resolution. |
 | `src/services/oauthService.ts` | Authorization URL, code exchange, `/oauth2/@me`, `.env` token persistence. |
 | `src/tools/*` | Tool definitions: name, title, description, zod schema, annotations, handler. |
 | `src/tools/registry.ts` | `RegisteredTool` type, `ok`/`fail`, `installTools`, error-boundary wrapper. |
-| `src/utils/format.ts` | `jsonSafe` — bigint-safe JSON serialization for `structuredContent`. |
+| `src/utils/format.ts` | `jsonSafe`: bigint-safe JSON serialization for `structuredContent`. |
 
 ## 4. Tool conventions
 
 1. **Naming**: `discord_<verb>_<noun>`, snake_case, ≤ 64 chars, unique across the registry.
-2. **Schemas**: `z.object({...}).strict()` — unknown keys are rejected. Shared fragments live in
+2. **Schemas**: `z.object({...}).strict()`: unknown keys are rejected. Shared fragments live in
    `src/tools/sharedSchemas.ts` (snowflake IDs, color, reason, dry_run).
 3. **Annotations**: `readOnlyHint` on pure reads; `destructiveHint` on every mutator; `idempotentHint`
    where the API is naturally idempotent (role adds/removes).
 4. **Guarding**: destructive tools with `dry_run: false` must `await ctx.control.assertControl(guildId)`
    **before** the first mutating call. `dry_run: true` returns the exact payload that would be sent,
    touching nothing.
-5. **Results**: `ok(text, structured?)` / `fail(text, structured?)` — never throw from a handler;
+5. **Results**: `ok(text, structured?)` / `fail(text, structured?)`: never throw from a handler;
    the registry wraps any escape in a translated error. `structuredContent` is bigint-safe JSON.
 6. **Audit**: mutating tools accept `reason` and stamp it as the audit-log reason (fallback
    `AUDIT_REASON` env).
@@ -101,7 +101,7 @@ Same flow with the guard surfaced explicitly:
 
 Verdict computation (`controlService.getVerdict`):
 
-- `mode: 'owner'` when the client is the guild owner (user tokens) → controlled.
+- `mode: 'owner'` when the client is the guild owner (user tokens) -> controlled.
 - `mode: 'role'` otherwise: controlled iff the client's highest role equals the guild's #1 role
   by **position** (ties broken by role ID), and the guild has more than one role.
 
@@ -113,17 +113,17 @@ could not outrank (Discord forbids moving a role above its own superiors).
 
 `discord_scaffold_server`:
 
-1. **Template lookup** — `minimal` \| `community` \| `mod` \| `social` (or an inline `plan`).
-2. **Validation** (`validateScaffoldPlan`) — role permissions must parse; channel names unique per
+1. **Template lookup**: `minimal` \| `community` \| `mod` \| `social` (or an inline `plan`).
+2. **Validation** (`validateScaffoldPlan`): role permissions must parse; channel names unique per
    type (`type|name` key, since Discord allows same names across types); overwrites must reference
    existing roles/channels.
-3. **Plan** — roles lowest-position-first, then categories, then channels (with `parent_id` from
+3. **Plan**: roles lowest-position-first, then categories, then channels (with `parent_id` from
    the nearest preceding category), then overwrites (`@everyone` resolved to the guild id).
-4. **Guard-once** — `assertControl` before step 1 when `dry_run: false`.
-5. **Per-step isolation** — each step is try/caught; result reports
+4. **Guard-once**: `assertControl` before step 1 when `dry_run: false`.
+5. **Per-step isolation**: each step is try/caught; result reports
    `{ steps_total, steps_completed, steps_failed, completed, failed, created_role_ids, created_channel_ids }`
    so partial scaffolds can be reconciled manually.
-6. **Idempotency** — names are checked before create; already-present resources are reported
+6. **Idempotency**: names are checked before create; already-present resources are reported
    instead of duplicated.
 
 ## 7. Error taxonomy
@@ -138,22 +138,22 @@ could not outrank (Discord forbids moving a role above its own superiors).
 
 ## 8. Testing strategy
 
-- **Unit (vitest, 56 tests)** — permissions (bitfield round-trips, color parsing, overwrite math),
+- **Unit (vitest, 56 tests)**: permissions (bitfield round-trips, color parsing, overwrite math),
   control (verdicts, elevation, remediation), scaffold (validation, ordering, parent wiring,
   dedupe), OAuth (URLs, persistence), registry (inventory, conventions), tools (dry-run vs apply,
   guard denial, structured content).
-- **Offline eval** (`npm run eval`) — registry invariants: count, naming, uniqueness, strict
+- **Offline eval** (`npm run eval`): registry invariants: count, naming, uniqueness, strict
   schemas, annotations, destructive/dry_run coverage.
-- **Live eval** (`npm run eval -- --live`) — spawns `dist/`, performs the MCP handshake, lists
+- **Live eval** (`npm run eval -- --live`): spawns `dist/`, performs the MCP handshake, lists
   tools over the protocol, and runs a read-only scenario battery against the configured token.
-- **Typecheck** — `tsc --noEmit` with `strict`, `noUnusedLocals`, `noUnusedParameters`,
+- **Typecheck**: `tsc --noEmit` with `strict`, `noUnusedLocals`, `noUnusedParameters`,
   `noUncheckedIndexedAccess`, `verbatimModuleSyntax`.
 
 ## 9. Transport matrix
 
 | Transport | Endpoint | Use |
 | --- | --- | --- |
-| stdio | — | Desktop MCP clients (Claude Desktop, etc.) |
+| stdio | none | Desktop MCP clients (Claude Desktop, etc.) |
 | http | `POST /mcp` | Streamable HTTP sessions |
 | http | `GET /health` | Liveness: `{ ok, name, version, tools }` |
 | http | `GET /callback` | OAuth2 authorization-code landing page |

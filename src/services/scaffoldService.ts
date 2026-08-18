@@ -141,7 +141,7 @@ function gamingTemplate(): { roles: PlanRole[]; channels: PlanChannel[]; overwri
       { name: 'patch-notes', type: 'text', topic: 'Discussion of patches' },
       { name: 'game-chat', type: 'category' },
       { name: 'general', type: 'text', topic: 'General gaming chat' },
-      { name: 'looking-for-group', type: 'text', topic: 'Find a squad — post game, rank, region' },
+      { name: 'looking-for-group', type: 'text', topic: 'Find a squad: post game, rank, region' },
       { name: 'clips', type: 'text', topic: 'Share your best moments' },
       { name: 'voice', type: 'category' },
       { name: 'game-vc-1', type: 'voice' },
@@ -296,9 +296,9 @@ function findParent(plan: ScaffoldPlan, channelName: string): string | undefined
 export function summarizePlan(plan: ScaffoldPlan): string {
   const lines: string[] = [`Template "${plan.template}" for guild \`${plan.guildId}\``];
   lines.push('');
-  lines.push('**Roles (bottom → top after creation):**');
+  lines.push('**Roles (bottom -> top after creation):**');
   for (const role of plan.roles) {
-    const perms = role.permissions.length > 0 ? ` — ${role.permissions.join(', ')}` : '';
+    const perms = role.permissions.length > 0 ? `: ${role.permissions.join(', ')}` : '';
     const color = role.color !== 'default' ? ` (${role.color})` : '';
     lines.push(`- @${role.name}${color}${perms}`);
   }
@@ -310,7 +310,7 @@ export function summarizePlan(plan: ScaffoldPlan): string {
     } else {
       const parent = findParent(plan, channel.name);
       const under = parent ? ` under **${parent}**` : '';
-      const topic = channel.topic ? ` — ${channel.topic}` : '';
+      const topic = channel.topic ? `: ${channel.topic}` : '';
       lines.push(`  - #${channel.name} (${channel.type})${under}${topic}`);
     }
   }

@@ -53,7 +53,7 @@ const whoamiTool: RegisteredTool = {
       `- Username: @${me.username}`,
       `- Global name: ${me.globalName ?? '(none)'}`,
       `- Bot: ${me.bot ? 'yes' : 'no'}`,
-      `- Token kind: ${ctx.client.tokenKind} (${ctx.client.isBot ? 'bot tokens cannot create or delete guilds' : 'user/OAuth2 — full guild ownership powers'})`,
+      `- Token kind: ${ctx.client.tokenKind} (${ctx.client.isBot ? 'bot tokens cannot create or delete guilds' : 'user/OAuth2: full guild ownership powers'})`,
       `- Avatar: ${me.avatar ? `\`${me.avatar}\`` : '(none)'}`,
     ].join('\n');
     return ok(text, {
@@ -98,9 +98,9 @@ const listGuildsTool: RegisteredTool = {
     }));
     const lines = items.map(
       (g, i) =>
-        `${offset + i + 1}. **${g.name}** \`${g.id}\` — ${g.owner ? 'owner' : 'member'} · perms: ${fmtPermissions(g.permissions)}`
+        `${offset + i + 1}. **${g.name}** \`${g.id}\`: ${g.owner ? 'owner' : 'member'} · perms: ${fmtPermissions(g.permissions)}`
     );
-    const header = `**Guilds** (${page.page.total ?? guilds.length} total, showing ${offset + 1}–${offset + page.page.count})`;
+    const header = `**Guilds** (${page.page.total ?? guilds.length} total, showing ${offset + 1}-${offset + page.page.count})`;
     const next = page.page.has_more ? `\nNext page: set offset=${page.page.next_offset}.` : '';
     return ok(`${[header, ...lines].join('\n')}${next}`, { guilds: items, page: page.page });
   },
@@ -167,8 +167,8 @@ const createGuildTool: RegisteredTool = {
   title: 'Create Guild',
   description:
     'Creates a brand-new guild (server) with the acting user/OAuth2 token. Supports name (2-100 chars), icon (base64 data URI), a guild template code, verification level (0-4), ' +
-    'default message notifications (0 all, 1 mentions only), explicit content filter (0-2), system channel id, initial roles (name, permission names, color, hoist, mentionable — ' +
-    'the first role in the array configures @everyone), and initial channels (name, type, parent_id, topic — categories must be listed before their children). ' +
+    'default message notifications (0 all, 1 mentions only), explicit content filter (0-2), system channel id, initial roles (name, permission names, color, hoist, mentionable: ' +
+    'the first role in the array configures @everyone), and initial channels (name, type, parent_id, topic: categories must be listed before their children). ' +
     'Example: {"name": "My New Server", "verification_level": 1, "roles": [{"name": "Mod", "permissions": ["ManageRoles"]}]}. ' +
     'Fails when the token is a bot (bots cannot create guilds), the name is invalid, or the account is at the 100-guild limit. No sovereignty guard applies (the guild is new).',
   inputSchema: z
@@ -279,7 +279,7 @@ const createGuildTool: RegisteredTool = {
 
     if (dryRun) {
       const text = [
-        `🔍 Dry run — no guild created. The following guild would be created:`,
+        `🔍 Dry run: no guild created. The following guild would be created:`,
         `- Name: **${body.name}**`,
         `- Verification level: ${body.verification_level ?? 0}`,
         `- Roles: ${body.roles?.length ?? 0} (first entry configures @everyone)`,
@@ -358,7 +358,7 @@ const updateGuildTool: RegisteredTool = {
 
     if (dryRun) {
       const text = [
-        `🔍 Dry run — no changes applied. Guild \`${guildId}\` would be updated with:`,
+        `🔍 Dry run: no changes applied. Guild \`${guildId}\` would be updated with:`,
         ...fields.map((f) => `- ${f}: \`${JSON.stringify(body[f as keyof RESTPatchAPIGuildJSONBody])}\``),
         `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
@@ -382,7 +382,7 @@ const deleteGuildTool: RegisteredTool = {
   name: 'discord_delete_guild',
   title: 'Delete Guild (irreversible)',
   description:
-    'Permanently deletes a guild and ALL of its content — channels, roles, messages, emoji, and integrations. This cannot be undone. ' +
+    'Permanently deletes a guild and ALL of its content: channels, roles, messages, emoji, and integrations. This cannot be undone. ' +
     'Example: {"guild_id": "123456789012345678", "dry_run": false}. ' +
     'Sovereignty-guarded: requires the client to own the guild (user token; bots cannot delete guilds). ' +
     'Dry-run by default; set dry_run=false to actually delete.',
@@ -399,7 +399,7 @@ const deleteGuildTool: RegisteredTool = {
 
     if (dryRun) {
       const text = [
-        `🔍 Dry run — nothing deleted. Guild \`${guildId}\` would be **permanently destroyed**:`,
+        `🔍 Dry run: nothing deleted. Guild \`${guildId}\` would be **permanently destroyed**:`,
         `- All channels, messages, and threads`,
         `- All roles and their assignments`,
         `- All emoji, stickers, and integrations`,
@@ -424,7 +424,7 @@ const listRolesTool: RegisteredTool = {
   name: 'discord_list_roles',
   title: 'List Roles',
   description:
-    'Lists every role in a guild, ordered highest→lowest position (as returned by the API), paginated. Each entry shows the role id, name, position, color hex, hoist/mentionable/managed flags, and resolved permission names. ' +
+    'Lists every role in a guild, ordered highest->lowest position (as returned by the API), paginated. Each entry shows the role id, name, position, color hex, hoist/mentionable/managed flags, and resolved permission names. ' +
     'Example: {"guild_id": "123456789012345678", "limit": 50}. ' +
     'Fails when the guild does not exist or the client cannot see it.',
   inputSchema: z
@@ -454,7 +454,7 @@ const listRolesTool: RegisteredTool = {
     const lines = page.items.map(
       (r: APIRole, i: number) => `${offset + i + 1}. ${fmtRole(r)} · perms: ${fmtPermissions(bitsToPermissionNames(BigInt(r.permissions)))}`
     );
-    const header = `**Roles in \`${guildId}\`** (${roles.length} total, showing ${offset + 1}–${offset + page.page.count})`;
+    const header = `**Roles in \`${guildId}\`** (${roles.length} total, showing ${offset + 1}-${offset + page.page.count})`;
     const next = page.page.has_more ? `\nNext page: set offset=${page.page.next_offset}.` : '';
     return ok(`${[header, ...lines].join('\n')}${next}`, { roles: items, page: page.page });
   },
@@ -543,7 +543,7 @@ const createRoleTool: RegisteredTool = {
     if (dryRun) {
       const previewPermissions = body.permissions != null ? bitsToPermissionNames(BigInt(body.permissions)) : [];
       const text = [
-        `🔍 Dry run — no role created. Role would be created in \`${guildId}\`:`,
+        `🔍 Dry run: no role created. Role would be created in \`${guildId}\`:`,
         `- Name: ${body.name ?? 'new role'}`,
         `- Permissions: ${fmtPermissions(previewPermissions)}${body.permissions != null ? ` (bitfield \`${body.permissions}\`)` : ''}`,
         `- Color: ${body.color != null ? `#${body.color.toString(16).padStart(6, '0')}` : '(default)'}`,
@@ -579,7 +579,7 @@ const updateRoleTool: RegisteredTool = {
   name: 'discord_update_role',
   title: 'Update Role',
   description:
-    'Modifies an existing role: name, permissions, color, hoist, mentionable, icon (data URI), or unicode_emoji. IMPORTANT: when permissions is provided it REPLACES the role\'s entire permission set — ' +
+    'Modifies an existing role: name, permissions, color, hoist, mentionable, icon (data URI), or unicode_emoji. IMPORTANT: when permissions is provided it REPLACES the role\'s entire permission set: ' +
     'omit it to leave permissions untouched. ' +
     'Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "name": "Senior Mod", "color": "#f1c40f", "dry_run": false}. ' +
     'Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). ' +
@@ -629,7 +629,7 @@ const updateRoleTool: RegisteredTool = {
         return `- ${f}: ${display}`;
       });
       const text = [
-        `🔍 Dry run — no changes applied. Role \`${roleId}\` in \`${guildId}\` would be updated with:`,
+        `🔍 Dry run: no changes applied. Role \`${roleId}\` in \`${guildId}\` would be updated with:`,
         ...lines,
         `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
@@ -662,7 +662,7 @@ const deleteRoleTool: RegisteredTool = {
   name: 'discord_delete_role',
   title: 'Delete Role (irreversible)',
   description:
-    'Permanently deletes a role from a guild. Every member holding the role loses it immediately — any permissions, colors, and channel overwrites tied to the role vanish. ' +
+    'Permanently deletes a role from a guild. Every member holding the role loses it immediately: any permissions, colors, and channel overwrites tied to the role vanish. ' +
     'Example: {"guild_id": "123456789012345678", "role_id": "987654321098765432", "dry_run": false}. ' +
     'Sovereignty-guarded: requires the client to own the guild (user token) or hold the #1 role (bot token). ' +
     'Fails when the role does not exist or is above the client in the hierarchy. Dry-run by default.',
@@ -682,7 +682,7 @@ const deleteRoleTool: RegisteredTool = {
 
     if (dryRun) {
       const text = [
-        `🔍 Dry run — nothing deleted. Role \`${roleId}\` in guild \`${guildId}\` would be **permanently removed**:`,
+        `🔍 Dry run: nothing deleted. Role \`${roleId}\` in guild \`${guildId}\` would be **permanently removed**:`,
         `- Every member holding it loses the role`,
         `- Its permissions, color, and channel overwrites disappear`,
         `- Any integrations or bots bound to the role break`,
@@ -738,9 +738,9 @@ const reorderRolesTool: RegisteredTool = {
     }));
 
     if (dryRun) {
-      const lines = positions.map((p) => `- \`${p.id}\` → position ${p.position}`);
+      const lines = positions.map((p) => `- \`${p.id}\` -> position ${p.position}`);
       const text = [
-        `🔍 Dry run — no changes applied. Roles in \`${guildId}\` would be reordered (sequentially, in this order):`,
+        `🔍 Dry run: no changes applied. Roles in \`${guildId}\` would be reordered (sequentially, in this order):`,
         ...lines,
         `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
@@ -750,7 +750,7 @@ const reorderRolesTool: RegisteredTool = {
     await guard(guildId, ctx);
     const roles = await ctx.client.reorderRoles(guildId, positions, { reason: resolveReason(params.reason as string | undefined) });
     const updated = roles.map((r: APIRole) => ({ id: r.id, name: r.name, position: r.position }));
-    const lines = updated.map((r) => `- **@${r.name}** \`${r.id}\` → position ${r.position}`);
+    const lines = updated.map((r) => `- **@${r.name}** \`${r.id}\` -> position ${r.position}`);
     return ok(`✅ Roles reordered in \`${guildId}\`:\n${lines.join('\n')}`, { roles: updated });
   },
 };
@@ -761,9 +761,9 @@ const resolvePermissionsTool: RegisteredTool = {
   name: 'discord_resolve_permissions',
   title: 'Resolve Permissions',
   description:
-    'Read-only permission resolver. Given permission names → returns the combined bitfield (decimal string). Given a bitfield (decimal or 0x hex) → returns the resolved permission names. ' +
-    'Given neither → returns the full catalog of every valid permission name with its bit value. ' +
-    'Examples: {"permissions": ["ManageRoles", "KickMembers"]} → bitfield; {"bitfield": "8"} → ["KickMembers"]; {} → catalog. ' +
+    'Read-only permission resolver. Given permission names -> returns the combined bitfield (decimal string). Given a bitfield (decimal or 0x hex) -> returns the resolved permission names. ' +
+    'Given neither -> returns the full catalog of every valid permission name with its bit value. ' +
+    'Examples: {"permissions": ["ManageRoles", "KickMembers"]} -> bitfield; {"bitfield": "8"} -> ["KickMembers"]; {} -> catalog. ' +
     'Fails on unknown permission names (the error lists every valid name) or a malformed bitfield.',
   inputSchema: z
     .object({
@@ -787,7 +787,7 @@ const resolvePermissionsTool: RegisteredTool = {
         return fail(err instanceof Error ? err.message : String(err));
       }
       const text = [
-        `**Permission names → bitfield**`,
+        `**Permission names -> bitfield**`,
         `Names (${namesInput.length}): ${fmtPermissions(namesInput)}`,
         `Bitfield: \`${bits.toString()}\``,
       ].join('\n');
@@ -815,7 +815,7 @@ const resolvePermissionsTool: RegisteredTool = {
       }
       const names = bitsToPermissionNames(bits);
       return ok(
-        `**Bitfield → permission names**\nBitfield: \`${bits.toString()}\`\nNames (${names.length}): ${fmtPermissions(names)}`,
+        `**Bitfield -> permission names**\nBitfield: \`${bits.toString()}\`\nNames (${names.length}): ${fmtPermissions(names)}`,
         { bitfield: bits.toString(), names, count: names.length }
       );
     }
@@ -824,7 +824,7 @@ const resolvePermissionsTool: RegisteredTool = {
       name,
       bit: PERMISSION_BITS[name]!.toString(),
     }));
-    const lines = catalog.map((c) => `- **${c.name}** — \`${c.bit}\``);
+    const lines = catalog.map((c) => `- **${c.name}**: \`${c.bit}\``);
     return ok(`**All ${catalog.length} permissions**\n${lines.join('\n')}`, {
       catalog,
       count: catalog.length,

@@ -1,6 +1,6 @@
 /**
  * Offline registry invariants for discord-sovereign-mcp.
- * No Discord token, no network — validates the tool surface itself.
+ * No Discord token, no network: validates the tool surface itself.
  * Run via `npm run eval` (offline mode) or directly: npx tsx scripts/offline-check.ts
  */
 import { tools } from '../src/tools/index.js';
@@ -8,11 +8,11 @@ import { z } from 'zod';
 
 let failures = 0;
 const pass = (label: string, detail = ''): void => {
-  console.log(`  PASS  ${label}${detail ? ` — ${detail}` : ''}`);
+  console.log(`  PASS  ${label}${detail ? `: ${detail}` : ''}`);
 };
 const fail = (label: string, detail: string): void => {
   failures += 1;
-  console.error(`  FAIL  ${label} — ${detail}`);
+  console.error(`  FAIL  ${label}: ${detail}`);
 };
 
 console.log('[offline-check] tool registry invariants');

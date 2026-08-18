@@ -8,10 +8,10 @@ like an administrator account:
 
 - Anyone who can call these tools can perform destructive, irreversible actions on every guild the
   token can reach.
-- The server binds the HTTP transport to `127.0.0.1` by default for a reason — do not expose it to
+- The server binds the HTTP transport to `127.0.0.1` by default for a reason: do not expose it to
   untrusted networks.
 - MCP clients (LLM chat apps) decide when to call tools. A prompt-injected instruction from a
-  message the bot reads could ask it to delete a channel — the layered defenses below are the only
+  message the bot reads could ask it to delete a channel: the layered defenses below are the only
   thing between that instruction and a `DELETE`.
 
 ## Layered defenses
@@ -21,7 +21,7 @@ like an administrator account:
 Every destructive tool defaults to `dry_run: true` and returns the exact API payload it *would*
 send. Execution with `dry_run: false` first calls `assertControl(guildId)`, which refuses to run
 unless the client **owns the guild** (user token) or **holds the #1 role** (bot token). Role
-*position*, not permission flags, is what decides hierarchy on Discord — this is the single most
+*position*, not permission flags, is what decides hierarchy on Discord: this is the single most
 effective protection against "I think I can, so I did" failures.
 
 ### 2. Guild allowlist
@@ -70,9 +70,9 @@ repository profile. Include:
 
 ## What is *not* a vulnerability
 
-- A prompt-injected message tricking the LLM into calling a tool — this is inherent to
+- A prompt-injected message tricking the LLM into calling a tool: this is inherent to
   tool-using agents; the defenses above (allowlist, guard, dry-run) are the mitigation.
-- Discord permission failures (e.g. `Missing Permissions`) — these are Discord's own enforcement
+- Discord permission failures (e.g. `Missing Permissions`): these are Discord's own enforcement
   and are surfaced as actionable diagnostics, not bugs.
 - Rate-limit responses from the Discord API.
 

@@ -13,7 +13,7 @@ import { ok, fail, type RegisteredTool, type ToolInput, type MCPResult } from '.
 const ENV_PATH = '.env';
 
 function maskToken(token: string): string {
-  return token.length > 12 ? `${token.slice(0, 8)}…${token.slice(-4)}` : '********';
+  return token.length > 12 ? `${token.slice(0, 8)}...${token.slice(-4)}` : '********';
 }
 
 const oauthStatus: RegisteredTool = {
@@ -33,7 +33,7 @@ const oauthStatus: RegisteredTool = {
       `Token type: **${config.tokenType}**`,
       configured
         ? `OAuth2 application: configured (redirect ${config.oauth.redirectUri})`
-        : `OAuth2 application: **not configured** — set DISCORD_OAUTH2_CLIENT_ID and DISCORD_OAUTH2_CLIENT_SECRET in .env`,
+        : `OAuth2 application: **not configured**: set DISCORD_OAUTH2_CLIENT_ID and DISCORD_OAUTH2_CLIENT_SECRET in .env`,
       `Scopes: ${OAUTH_SCOPES.join(', ')}`,
       config.tokenType === 'oauth2'
         ? 'The current token is an OAuth2 user token (from a previous bootstrap).'
@@ -113,7 +113,7 @@ const oauthExchange: RegisteredTool = {
       const lines = [
         `Token exchanged successfully for **${username}**.`,
         `Scopes granted: ${identity.scopes.length > 0 ? identity.scopes.join(', ') : '(none reported)'}`,
-        `Token (masked): ${maskToken(token.access_token)} — expires in ${token.expires_in}s`,
+        `Token (masked): ${maskToken(token.access_token)}: expires in ${token.expires_in}s`,
         p.persist !== false
           ? 'Persisted to .env. Restart the server to use the user token (DISCORD_TOKEN_TYPE=oauth2).'
           : 'Not persisted (persist=false). The token is valid only for this process.',

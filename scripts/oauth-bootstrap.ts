@@ -1,5 +1,5 @@
 /**
- * OAuth2 bootstrap wrapper — delegates to src/bootstrap/oauthBootstrap.ts so the
+ * OAuth2 bootstrap wrapper: delegates to src/bootstrap/oauthBootstrap.ts so the
  * same flow is available from `npx discord-sovereign-mcp --oauth`.
  *
  * Usage:

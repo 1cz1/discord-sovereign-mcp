@@ -113,7 +113,7 @@ async function main(): Promise<void> {
         persistTokenToEnv('.env', token.access_token);
         const username = identity.user ? identity.user.username : 'user';
         console.error(
-          `[discord-sovereign-mcp] OAuth2 bootstrap complete for ${username} — token persisted to .env`
+          `[discord-sovereign-mcp] OAuth2 bootstrap complete for ${username}: token persisted to .env`
         );
         res.status(200).type('text/html').send(
           oauthSuccessHtml(

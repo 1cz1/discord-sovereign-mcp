@@ -5,12 +5,12 @@ The server is invoked as `npx discord-sovereign-mcp@latest` (stdio transport); s
 [../http/http-client-config.json](../http/http-client-config.json) for the HTTP transport variant.
 
 > **Easier than copy-paste:** `npx discord-sovereign-mcp@latest --install` configures every client
-> below (and Claude Desktop, VS Code too) for you — see [docs/INSTALL.md](../../docs/INSTALL.md).
+> below (and Claude Desktop, VS Code too) for you: see [docs/INSTALL.md](../../docs/INSTALL.md).
 
 | File | Client | Where it goes |
 | --- | --- | --- |
 | `claude-code.json` | Claude Code | project scope: `.mcp.json` at the repo root |
-| `claude-desktop-config.json` | Claude Desktop | `claude_desktop_config.json` (menu: Claude → Settings → Developer) |
+| `claude-desktop-config.json` | Claude Desktop | `claude_desktop_config.json` (menu: Claude -> Settings -> Developer) |
 | `codex-config.toml` | Codex CLI | `~/.codex/config.toml` (user) or `.codex/config.toml` (project) |
 | `opencode.json` | opencode | `opencode.json` in the project (or `~/.config/opencode/`) |
 | `antigravity-config.json` | Google Antigravity | Project MCP settings |
@@ -20,11 +20,11 @@ The server is invoked as `npx discord-sovereign-mcp@latest` (stdio transport); s
 
 ## Setup
 
-1. Get a token — either a bot token ([discord.com/developers/applications](https://discord.com/developers/applications))
+1. Get a token: either a bot token ([discord.com/developers/applications](https://discord.com/developers/applications))
    or a user token via OAuth2 (`npx discord-sovereign-mcp --oauth`).
 2. Replace `DISCORD_TOKEN` in the config with your token.
 3. **Strongly recommended**: set `DISCORD_ALLOWED_GUILDS` to the comma-separated IDs of the
-   servers the agent may touch. When set, every tool refuses guilds outside the list — even when
+   servers the agent may touch. When set, every tool refuses guilds outside the list: even when
    the sovereignty guard would otherwise pass.
 
 ## OAuth2 (user-token mode)
@@ -45,4 +45,4 @@ connect to `http://127.0.0.1:3000/mcp`.
 - Keep `TRANSPORT=stdio` unless you need HTTP; the HTTP binding defaults to loopback
   (`HTTP_HOST=127.0.0.1`).
 - The Sovereignty Guard only allows mutating tools when the client holds the #1 role (bot token)
-  or owns the guild (user token) — verify with `discord_assert_sovereignty` first.
+  or owns the guild (user token): verify with `discord_assert_sovereignty` first.
