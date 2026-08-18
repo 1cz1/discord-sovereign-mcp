@@ -1,0 +1,8 @@
+# Codex CLI — ~/.codex/config.toml (user scope) or .codex/config.toml (project scope)
+# Docs: https://github.com/openai/codex/blob/main/docs/config.md
+model = "gpt-5.2-codex"
+
+[mcp_servers.discord-sovereign]
+command = "npx"
+args = ["discord-sovereign-mcp@latest"]
+env = { DISCORD_TOKEN = "your-bot-or-oauth2-token", DISCORD_TOKEN_TYPE = "auto", DISCORD_ALLOWED_GUILDS = "", TRANSPORT = "stdio", LOG_LEVEL = "info" }

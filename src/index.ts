@@ -11,10 +11,17 @@ import { installTools, type ToolContext } from './tools/registry.js';
 import { tools } from './tools/index.js';
 import { SERVER_NAME, VERSION } from './constants.js';
 import { describeDiscordError } from './client/errors.js';
+import { runOAuthBootstrap } from './bootstrap/oauthBootstrap.js';
 
 loadDotenv();
 
 async function main(): Promise<void> {
+  const argv = process.argv.slice(2);
+  if (argv.includes('--oauth') || argv.includes('-o')) {
+    const exitCode = await runOAuthBootstrap(argv, process.env);
+    process.exit(exitCode);
+  }
+
   const config = loadConfig();
 
   const client = new DiscordClient({ token: config.token, tokenType: config.tokenType });
@@ -25,7 +32,7 @@ async function main(): Promise<void> {
     const info = describeDiscordError(err);
     console.error(
       `Failed to authenticate with Discord: ${info.message}\n` +
-        'Check DISCORD_TOKEN. If you are using an OAuth2/user token, re-run `npm run oauth`.'
+        'Check DISCORD_TOKEN. If you are using an OAuth2/user token, re-run `npm run oauth` (or `npx discord-sovereign-mcp --oauth`).'
     );
     process.exit(1);
   }

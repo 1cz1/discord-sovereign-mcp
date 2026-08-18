@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="discord-sovereign-mcp banner">
+  <rect width="1280" height="640" fill="#0a0a0a"/>
+  <!-- hairline grid -->
+  <g stroke="#212327" stroke-width="1">
+    <path d="M0 80 H1280 M0 160 H1280 M0 240 H1280 M0 320 H1280 M0 400 H1280 M0 480 H1280 M0 560 H1280"/>
+    <path d="M160 0 V640 M320 0 V640 M480 0 V640 M640 0 V640 M800 0 V640 M960 0 V640 M1120 0 V640"/>
+  </g>
+  <rect x="0.5" y="0.5" width="1279" height="639" fill="none" stroke="#363a3f" stroke-width="1"/>
+  <!-- glow -->
+  <circle cx="1080" cy="320" r="280" fill="#00ff852e"/>
+  <!-- shield -->
+  <g transform="translate(180 120) scale(1.15)">
+    <path d="M200 40 L320 92 V192 C320 262 268 306 200 330 C132 306 80 262 80 192 V92 Z"
+          fill="#00ff850d" stroke="#00ff85" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M200 68 L294 110 V192 C294 246 254 280 200 300 C146 280 106 246 106 192 V110 Z"
+          fill="none" stroke="#363a3f" stroke-width="2"/>
+    <path d="M128 92 L152 128 L176 96 L194 120 L212 96 L236 128 L260 92 L250 146 H138 Z"
+          fill="#00ff85" stroke="#0a0a0a" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="200" cy="152" r="6" fill="#0a0a0a"/>
+    <path d="M162 200 L184 222 L226 178" fill="none" stroke="#00ff85" stroke-width="11"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- wordmark -->
+  <text x="560" y="256" fill="#fff" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="46" font-weight="700" letter-spacing="-1">discord-sovereign-mcp</text>
+  <text x="560" y="306" fill="#7d8187" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="22" letter-spacing="2">SOVEREIGNTY GUARD · 46 TOOLS · USER-TOKEN MCP</text>
+  <g stroke="#212327" stroke-width="1.5">
+    <path d="M560 330 H920"/>
+  </g>
+  <text x="560" y="368" fill="#00ff85" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="19">guard  →  assert_sovereignty · elevate_control</text>
+  <text x="560" y="398" fill="#dadbdf" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="19">scaffold  →  minimal · moderation · community · vip</text>
+  <text x="560" y="428" fill="#dadbdf" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="19">manage  →  roles · channels · bans · emoji · invites</text>
+  <text x="560" y="458" fill="#7d8187" font-family="'Courier New', 'SFMono-Regular', Consolas, monospace"
+        font-size="19">npx discord-sovereign-mcp@latest --oauth</text>
+</svg>

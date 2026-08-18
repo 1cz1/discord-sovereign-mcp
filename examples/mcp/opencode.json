@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "discord-sovereign": {
+      "type": "local",
+      "command": ["npx", "discord-sovereign-mcp@latest"],
+      "enabled": true,
+      "environment": {
+        "DISCORD_TOKEN": "your-bot-or-oauth2-token",
+        "DISCORD_TOKEN_TYPE": "auto",
+        "DISCORD_ALLOWED_GUILDS": "",
+        "TRANSPORT": "stdio",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}

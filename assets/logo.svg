@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="discord-sovereign-mcp">
+  <rect width="256" height="256" rx="56" fill="#0a0a0a"/>
+  <rect x="8.5" y="8.5" width="239" height="239" rx="47.5" fill="none" stroke="#212327" stroke-width="1"/>
+  <!-- shield -->
+  <path d="M128 46 L182 66 V122 C182 160 160 186 128 198 C96 186 74 160 74 122 V66 Z"
+        fill="#00ff850d" stroke="#00ff85" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M128 60 L170 75 V122 C170 152 152 174 128 184 C104 174 86 152 86 122 V75 Z"
+        fill="none" stroke="#212327" stroke-width="1.5"/>
+  <!-- crown -->
+  <path d="M96 62 L108 82 L120 64 L128 78 L136 64 L148 82 L160 62 L154 96 H102 Z"
+        fill="#00ff85" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="128" cy="102" r="4" fill="#0a0a0a"/>
+  <!-- checkmark -->
+  <path d="M110 128 L122 140 L146 114" fill="none" stroke="#00ff85" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

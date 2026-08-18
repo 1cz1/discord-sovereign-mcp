@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "discord-sovereign": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["discord-sovereign-mcp@latest"],
+      "env": {
+        "DISCORD_TOKEN": "your-bot-or-oauth2-token",
+        "DISCORD_TOKEN_TYPE": "auto",
+        "DISCORD_ALLOWED_GUILDS": "",
+        "TRANSPORT": "stdio",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "discord": {
+    "discord-sovereign": {
       "command": "npx",
-      "args": ["tsx", "C:\\path\\to\\DiscordServerMCP\\src\\index.ts"],
+      "args": ["discord-sovereign-mcp@latest"],
       "env": {
         "DISCORD_TOKEN": "your-bot-or-oauth2-token",
         "DISCORD_TOKEN_TYPE": "auto",
