@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" width="96" alt="discord-sovereign-mcp">
+  <img src="assets/logo.svg" width="96" alt="discord-sovereign-mcp logo">
 </p>
 
 <h1 align="center">discord-sovereign-mcp</h1>
@@ -11,12 +11,17 @@
 </p>
 
 <p align="center">
-  <a href="https://img.shields.io/badge/license-MIT-00ff85"><img src="https://img.shields.io/badge/license-MIT-00ff85" alt="license MIT"></a>
-  <a href="https://img.shields.io/badge/version-0.1.0-00ff85"><img src="https://img.shields.io/badge/version-0.1.0-00ff85" alt="version 0.1.0"></a>
-  <a href="https://img.shields.io/badge/tools-46-00ff85"><img src="https://img.shields.io/badge/tools-46-00ff85" alt="46 tools"></a>
-  <a href="https://img.shields.io/badge/tests-60%20passing-00ff85"><img src="https://img.shields.io/badge/tests-60%20passing-00ff85" alt="60 tests passing"></a>
-  <a href="https://img.shields.io/badge/node-%3E%3D20-00ff85"><img src="https://img.shields.io/badge/node-%3E%3D20-00ff85" alt="node >=20"></a>
-  <a href="https://img.shields.io/badge/transport-stdio%20%7C%20http-00ff85"><img src="https://img.shields.io/badge/transport-stdio%20%7C%20http-00ff85" alt="stdio | http"></a>
+  <img src="assets/banner.svg" width="640" alt="discord-sovereign-mcp banner">
+</p>
+
+<p align="center">
+  <img src="assets/badges/version.svg" alt="version 0.2.0">
+  <img src="assets/badges/license.svg" alt="MIT license">
+  <img src="assets/badges/tools.svg" alt="46 tools">
+  <img src="assets/badges/tests.svg" alt="80 tests passing">
+  <img src="assets/badges/node.svg" alt="node >= 20">
+  <img src="assets/badges/transport.svg" alt="stdio | http">
+  <img src="assets/badges/guard.svg" alt="sovereignty guard">
 </p>
 
 ---
@@ -27,7 +32,24 @@
 > has permissions but sits below the roles it tries to manage. This server refuses to act until the
 > client provably sits at the top of the ladder.
 
-## Capabilities
+## One-click install
+
+```bash
+npx discord-sovereign-mcp@latest --install
+```
+
+That's it. The installer wires the server into **Claude Code, Claude Desktop, Codex, opencode,
+Cursor, Windsurf, Continue, Google Antigravity, and VS Code** — interactive picker by default,
+`--all` if you want everything, backups before every write, idempotent on re-run.
+
+- `npx discord-sovereign-mcp@latest --install --all` — every client, no prompts
+- `npx discord-sovereign-mcp@latest --install --client codex,opencode --dry-run` — preview
+- Full guide: [docs/INSTALL.md](./docs/INSTALL.md)
+
+Prefer manual setup? Copy the ready-made config for your client from
+[examples/mcp/](./examples/mcp) — every file, every client, the same `npx` invocation.
+
+## What you get
 
 - **46 tools** across six areas — control, guilds, channels, members, scaffolding, OAuth — all
   snake_case, `discord_`-prefixed, schema-strict, and documented in [TOOLS.md](./TOOLS.md).
@@ -35,7 +57,7 @@
   `discord_assert_sovereignty` before executing with `dry_run: false` — enforced on the server
   side, not just in prompts.
 - **One-shot server scaffolding** (`discord_scaffold_server`): roles, categories, channels, and
-  permission overwrites from a declarative template (minimal / community / mod / social), with
+  permission overwrites from a declarative template (minimal / community / gaming / support), with
   guard-once, per-step failure isolation, and partial-failure reconciliation output.
 - **OAuth2 bootstrap** for user-token mode (`npx discord-sovereign-mcp --oauth`), plus a built-in
   `/callback` handler when running over HTTP transport.
@@ -54,11 +76,8 @@ npx discord-sovereign-mcp@latest --oauth
 npm install
 cp .env.example .env        # then edit: DISCORD_TOKEN (or OAuth2 vars)
 npm run build
-npm test                    # 60 unit tests
+npm test                    # 80 unit tests
 ```
-
-Then point your MCP client at the server — per-client configs live in
-[examples/mcp/](./examples/mcp) (Claude Code, Codex, opencode, Cursor, Windsurf, Continue).
 
 ### Option A — bot token (recommended for servers you own)
 
@@ -86,6 +105,34 @@ npm run dev            # tsx, stdio transport
 npm run start          # built dist/, stdio transport
 TRANSPORT=http npm run start    # HTTP transport (POST /mcp, GET /health)
 ```
+
+## The Sovereignty Guard
+
+- `discord_assert_sovereignty` — read-only verdict: prints the full role ladder with positions and
+  flags the client role. Controlled = client owns the guild (user mode) **or** holds the #1 role
+  (bot mode).
+- `discord_elevate_control` — moves the client role to the top of the ladder, then re-verifies.
+  Never fails silently: if the API rejects the reorder, the error explains that a human must drag
+  the role above the roles it couldn't outrank.
+- Every destructive tool runs the same gate (`assertControl`) before its first mutating call when
+  `dry_run: false` — awaited server-side, so a guard failure can never be dropped.
+
+## Scaffolding
+
+`discord_scaffold_server` builds a whole server from a template in one call:
+
+```jsonc
+{
+  "guild_id": "1234567890",
+  "template": "community",          // minimal | community | gaming | support
+  "dry_run": false
+}
+```
+
+It executes in safe order — roles lowest-first, then categories, then channels (with parent
+wiring), then permission overwrites — guarding **once** before the first step. Each step is
+isolated: on failure the tool returns `steps_total / steps_completed / steps_failed` plus the
+already-created role/channel IDs so a partial scaffold can be reconciled by hand.
 
 ## Architecture
 
@@ -125,46 +172,21 @@ TRANSPORT=http npm run start    # HTTP transport (POST /mcp, GET /health)
 | `AUDIT_REASON` | `via discord-sovereign-mcp` | Audit-log reason stamped on actions. |
 | `LOG_LEVEL` | `info` | `info` \| `debug` \| `warn` \| `error`. |
 
-## The Sovereignty Guard
-
-- `discord_assert_sovereignty` — read-only verdict: prints the full role ladder with positions and
-  flags the client role. Controlled = client owns the guild (user mode) **or** holds the #1 role
-  (bot mode).
-- `discord_elevate_control` — moves the client role to the top of the ladder, then re-verifies.
-  Never fails silently: if the API rejects the reorder, the error explains that a human must drag
-  the role above the roles it couldn't outrank.
-- Every destructive tool runs the same gate (`assertControl`) before its first mutating call when
-  `dry_run: false` — awaited server-side, so a guard failure can never be dropped.
-
-## Scaffolding
-
-`discord_scaffold_server` builds a whole server from a template in one call:
-
-```jsonc
-{
-  "guild_id": "1234567890",
-  "template": "community",          // minimal | community | mod | social
-  "dry_run": false
-}
-```
-
-It executes in safe order — roles lowest-first, then categories, then channels (with parent
-wiring), then permission overwrites — guarding **once** before the first step. Each step is
-isolated: on failure the tool returns `steps_total / steps_completed / steps_failed` plus the
-already-created role/channel IDs so a partial scaffold can be reconciled by hand.
-
 ## AI client configs
 
-| Client | Config file | Server invocation |
+| Client | Config file | Where it goes |
 | --- | --- | --- |
-| Claude Code | `.mcp.json` | `npx discord-sovereign-mcp@latest` |
-| Codex CLI | `codex-config.toml` | `npx discord-sovereign-mcp@latest` |
-| opencode | `opencode.json` | `npx discord-sovereign-mcp@latest` |
-| Cursor | `.cursor/mcp.json` | `npx discord-sovereign-mcp@latest` |
-| Windsurf | `windsurf-mcp.json` | `npx discord-sovereign-mcp@latest` |
-| Continue | `continue-config.json` | `npx discord-sovereign-mcp@latest` |
+| Claude Code | `claude-code.json` | `.mcp.json` at the repo root (or `~/.claude.json`) |
+| Claude Desktop | `claude-desktop-config.json` | menu: Claude → Settings → Developer |
+| Codex CLI | `codex-config.toml` | `~/.codex/config.toml` (user) or `.codex/config.toml` (project) |
+| opencode | `opencode.json` | `opencode.json` in the project (or `~/.config/opencode/`) |
+| Cursor | `cursor-mcp.json` | `.cursor/mcp.json` |
+| Windsurf | `windsurf-mcp.json` | `.windsurf/mcp_config.json` |
+| Continue | `continue-config.json` | `~/.continue/config.json` |
+| Google Antigravity | `antigravity-config.json` | Project MCP settings |
 
-Ready-to-paste files: [examples/mcp/](./examples/mcp).
+Ready-to-paste files: [examples/mcp/](./examples/mcp). Every client invokes the server the same
+way: `npx discord-sovereign-mcp@latest`.
 
 ## Evaluation
 
@@ -177,14 +199,15 @@ npm run eval -- --live     # spawns dist/ and runs protocol-level checks against
 
 ```
 src/
-  index.ts                 # entrypoint: stdio + HTTP transports, /health, /callback
+  index.ts                 # entrypoint: stdio + HTTP transports, /health, /callback, --install
   config.ts                # typed env config + guild allowlist
   constants.ts             # server identity, permission/color constants
+  bootstrap/               # one-shot CLI: installer (--install), OAuth bootstrap (--oauth)
   client/                  # Discord REST client + error translation
   services/                # control (sovereignty), permissions, scaffolding, OAuth
   tools/                   # 46 RegisteredTools + registry wiring + shared zod schemas
   utils/                   # formatting (bigint-safe JSON)
-tests/                     # vitest suite (60 tests)
+tests/                     # vitest suite (80 tests)
 scripts/                   # oauth bootstrap, eval runner, docs generator
 ```
 
@@ -195,6 +218,7 @@ npm run typecheck   # tsc --noEmit
 npm run test        # vitest run
 npm run test:watch
 npm run test:coverage
+npm run install:mcp # run the installer locally (tsx)
 npm run oauth       # OAuth2 user-token bootstrap
 npm run eval        # offline registry checks (add --live for protocol checks)
 npx tsx scripts/gen-tools-doc.ts   # regenerate TOOLS.md
@@ -203,8 +227,9 @@ npx tsx scripts/gen-tools-doc.ts   # regenerate TOOLS.md
 ## Docs
 
 - [TOOLS.md](./TOOLS.md) — full reference for all 46 tools (generated).
-- [SPEC.md](./SPEC.md) — design spec: threat model, guard semantics, tool contracts.
-- [RECIPES.md](./RECIPES.md) — end-to-end recipes for common workflows.
+- [docs/INSTALL.md](./docs/INSTALL.md) — the installer: flags, token resolution, what gets written.
+- [docs/SPEC.md](./docs/SPEC.md) — design spec: threat model, guard semantics, tool contracts.
+- [docs/RECIPES.md](./docs/RECIPES.md) — end-to-end recipes for common workflows.
 - [SECURITY.md](./SECURITY.md) — threat model, token handling, and reporting policy.
 
 ## License

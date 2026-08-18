@@ -27,6 +27,20 @@ export class ConfigError extends Error {
   }
 }
 
+/** Parses the OAuth2 env block. Shared by loadConfig and the OAuth bootstrap. */
+export function buildOAuthConfig(env: Record<string, string | undefined>): OAuthConfig {
+  const port = Number(env['DISCORD_OAUTH2_PORT'] ?? 8788);
+  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+    throw new ConfigError(`Invalid DISCORD_OAUTH2_PORT '${env['DISCORD_OAUTH2_PORT']}'.`);
+  }
+  return {
+    clientId: env['DISCORD_OAUTH2_CLIENT_ID'] ?? '',
+    clientSecret: env['DISCORD_OAUTH2_CLIENT_SECRET'] ?? '',
+    redirectUri: env['DISCORD_OAUTH2_REDIRECT_URI'] ?? 'http://localhost:8788/callback',
+    port,
+  };
+}
+
 function parseEnv(env: Record<string, string | undefined>): Config {
   const token = env['DISCORD_TOKEN']?.trim() ?? '';
   if (!token) {
@@ -46,7 +60,6 @@ function parseEnv(env: Record<string, string | undefined>): Config {
     throw new ConfigError(`Invalid TRANSPORT '${transport}'. Use stdio | http.`);
   }
   const httpPort = Number(env['HTTP_PORT'] ?? 3000);
-  const oauthPort = Number(env['DISCORD_OAUTH2_PORT'] ?? 8788);
   if (!Number.isInteger(httpPort) || httpPort < 0 || httpPort > 65535) {
     throw new ConfigError(`Invalid HTTP_PORT '${env['HTTP_PORT']}'.`);
   }
@@ -64,12 +77,7 @@ function parseEnv(env: Record<string, string | undefined>): Config {
     transport,
     httpHost: env['HTTP_HOST'] ?? '127.0.0.1',
     httpPort,
-    oauth: {
-      clientId: env['DISCORD_OAUTH2_CLIENT_ID'] ?? '',
-      clientSecret: env['DISCORD_OAUTH2_CLIENT_SECRET'] ?? '',
-      redirectUri: env['DISCORD_OAUTH2_REDIRECT_URI'] ?? 'http://localhost:8788/callback',
-      port: oauthPort,
-    },
+    oauth: buildOAuthConfig(env),
     auditReason: env['AUDIT_REASON'] ?? 'via discord-sovereign-mcp',
     logLevel,
   };

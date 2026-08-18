@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="scaffold templates icon">
+  <rect width="96" height="96" rx="22" fill="#12151c"/>
+  <rect x="0.5" y="0.5" width="95" height="95" rx="22" fill="none" stroke="#21262d"/>
+  <path d="M18 32 L48 20 L78 32 L48 44 Z" fill="none" stroke="#5865f2" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 46 L48 34 L78 46 L48 58 Z" fill="none" stroke="#5865f2" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M18 60 L48 48 L78 60 L48 72 Z" fill="none" stroke="#00ff85" stroke-width="4" stroke-linejoin="round"/>
+</svg>

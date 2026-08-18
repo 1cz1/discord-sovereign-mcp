@@ -22,8 +22,8 @@ import {
   roleIdSchema,
   userIdSchema,
 } from './sharedSchemas.js';
-import { DEFAULT_AUDIT_REASON, TIMEOUT_MAX_MINUTES } from '../constants.js';
-import { fmtBan, fmtMember, fmtMessage, paginate, truncate } from '../utils/format.js';
+import { TIMEOUT_MAX_MINUTES } from '../constants.js';
+import { fmtBan, fmtMember, fmtMessage, paginate, resolveReason, truncate } from '../utils/format.js';
 import { parseColor } from '../services/permissionService.js';
 
 const membersLimitSchema = z
@@ -191,10 +191,6 @@ function buildEmbed(input: Record<string, unknown>): APIEmbed | null {
   return any ? embed : null;
 }
 
-function safeReason(params: ToolInput): string {
-  return typeof params.reason === 'string' && params.reason.length > 0 ? params.reason : DEFAULT_AUDIT_REASON;
-}
-
 function num(params: ToolInput, key: string, fallback: number, min: number, max: number): number {
   const v = params[key];
   return typeof v === 'number' && Number.isFinite(v) ? Math.min(Math.max(v, min), max) : fallback;
@@ -320,7 +316,7 @@ export const memberTools: RegisteredTool[] = [
       const guildId = String(params.guild_id);
       const userId = String(params.user_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
       const nick = typeof params.nick === 'string' ? params.nick : undefined;
       const roles = Array.isArray(params.roles) ? (params.roles as string[]) : undefined;
       const timeoutMinutes = typeof params.timeout_minutes === 'number' ? params.timeout_minutes : undefined;
@@ -385,7 +381,7 @@ export const memberTools: RegisteredTool[] = [
       const userId = String(params.user_id);
       const roleId = String(params.role_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would add role ${roleId} to member <@${userId}> in guild ${guildId}.`, {
@@ -427,7 +423,7 @@ export const memberTools: RegisteredTool[] = [
       const userId = String(params.user_id);
       const roleId = String(params.role_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would remove role ${roleId} from member <@${userId}> in guild ${guildId}.`, {
@@ -467,7 +463,7 @@ export const memberTools: RegisteredTool[] = [
       const guildId = String(params.guild_id);
       const userId = String(params.user_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would kick member <@${userId}> from guild ${guildId}.`, {
@@ -513,7 +509,7 @@ export const memberTools: RegisteredTool[] = [
       const userId = String(params.user_id);
       const deleteMessageDays = num(params, 'delete_message_days', 0, 0, 7);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would ban member <@${userId}> from guild ${guildId} (delete_message_days: ${deleteMessageDays}).`, {
@@ -554,7 +550,7 @@ export const memberTools: RegisteredTool[] = [
       const guildId = String(params.guild_id);
       const userId = String(params.user_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would unban user <@${userId}> in guild ${guildId}.`, {
@@ -668,7 +664,7 @@ export const memberTools: RegisteredTool[] = [
     handle: async (params, ctx): Promise<MCPResult> => {
       const channelId = String(params.channel_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
       const content = typeof params.content === 'string' ? params.content : undefined;
       const suppressEmbeds = params.suppress_embeds === true;
 
@@ -840,7 +836,7 @@ export const memberTools: RegisteredTool[] = [
       const channelId = String(params.channel_id);
       const messageId = String(params.message_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
       const content = typeof params.content === 'string' ? params.content : undefined;
 
       let embed: APIEmbed | null = null;
@@ -904,7 +900,7 @@ export const memberTools: RegisteredTool[] = [
       const channelId = String(params.channel_id);
       const messageId = String(params.message_id);
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       if (dryRun) {
         return ok(`[dry-run] Would delete message \`${messageId}\` in <#${channelId}>.`, {
@@ -948,7 +944,7 @@ export const memberTools: RegisteredTool[] = [
       const after = typeof params.after === 'string' ? params.after : undefined;
       const includePinned = params.include_pinned === true;
       const dryRun = params.dry_run !== false;
-      const reason = safeReason(params);
+      const reason = resolveReason(params.reason as string | undefined);
 
       const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
       const toDelete: string[] = [];

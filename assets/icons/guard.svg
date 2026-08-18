@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="sovereignty guard icon">
+  <rect width="96" height="96" rx="22" fill="#12151c"/>
+  <rect x="0.5" y="0.5" width="95" height="95" rx="22" fill="none" stroke="#21262d"/>
+  <path d="M48 18 L68 25 V48 C68 61 60 71 48 76 C36 71 28 61 28 48 V25 Z"
+        fill="#5865f2" opacity="0.20" stroke="#00ff85" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M48 24 L62 29 V48 C62 57 56 65 48 69 C40 65 34 57 34 48 V29 Z"
+        fill="none" stroke="#5865f2" stroke-width="2"/>
+  <path d="M36 24 L41 33 L45 26 L48 32 L51 26 L55 33 L60 24 L58 39 H38 Z"
+        fill="#00ff85" stroke="#12151c" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M42 46 L47 51 L55 42" fill="none" stroke="#00ff85" stroke-width="4"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

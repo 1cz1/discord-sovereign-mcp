@@ -23,8 +23,8 @@ import {
   userIdSchema,
 } from './sharedSchemas.js';
 import { buildOverwriteBody, calculateMemberPermissions, bitsToPermissionNames } from '../services/permissionService.js';
-import { fmtChannel, fmtPermissions, jsonSafe, paginate, truncate } from '../utils/format.js';
-import { CHANNEL_TYPE_LABELS, DEFAULT_AUDIT_REASON, GUILD_CHANNEL_TYPE_LABELS } from '../constants.js';
+import { fmtChannel, fmtPermissions, jsonSafe, paginate, resolveReason, truncate } from '../utils/format.js';
+import { CHANNEL_TYPE_LABELS, GUILD_CHANNEL_TYPE_LABELS } from '../constants.js';
 
 function typeLabel(t: number): string {
   return (
@@ -48,10 +48,6 @@ type GuildChannel = Extract<APIChannel, { guild_id?: string }>;
 
 function isGuildChannel(c: APIChannel): c is GuildChannel {
   return 'guild_id' in c && typeof c.guild_id === 'string';
-}
-
-function auditReason(reason: string | undefined): string {
-  return reason ?? DEFAULT_AUDIT_REASON;
 }
 
 /** Fetches a channel and ensures it belongs to a guild (needed for the Sovereignty Guard). */
@@ -298,7 +294,7 @@ const createChannel: RegisteredTool = {
       ...(p.user_limit !== undefined ? { user_limit: p.user_limit } : {}),
       ...(p.rate_limit_per_user !== undefined ? { rate_limit_per_user: p.rate_limit_per_user } : {}),
     };
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(`Would create a ${p.type ?? 'text'} channel named "${p.name}".`, {
         endpoint: 'POST /guilds/{guild_id}/channels',
@@ -380,7 +376,7 @@ const updateChannel: RegisteredTool = {
       ...(p.user_limit !== undefined ? { user_limit: p.user_limit } : {}),
       ...(p.rate_limit_per_user !== undefined ? { rate_limit_per_user: p.rate_limit_per_user } : {}),
     };
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(`Would update channel #${channel.name ?? channel.id} with the following fields.`, {
         endpoint: 'PATCH /channels/{channel_id}',
@@ -439,7 +435,7 @@ const deleteChannel: RegisteredTool = {
   handle: async (params: ToolInput, ctx: ToolContext): Promise<MCPResult> => {
     const p = params as unknown as DeleteChannelInput;
     const channel = await requireGuildChannel(ctx, p.channel_id);
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(
         `Would permanently delete channel #${channel.name ?? channel.id} — including its threads and message history.`,
@@ -527,7 +523,7 @@ const createThread: RegisteredTool = {
       p.message_id !== undefined
         ? ({ ...baseBody, message_id: p.message_id } as unknown as RESTPostAPIChannelThreadsJSONBody)
         : baseBody;
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(`Would create a ${p.type ?? 'public_thread'} thread named "${p.name}".`, {
         endpoint: 'POST /channels/{channel_id}/threads',
@@ -597,7 +593,7 @@ const setPermissionOverwrite: RegisteredTool = {
     const { allow, deny } = buildOverwriteBody(p.allow, p.deny);
     const overwriteType = p.target_type === 'role' ? OverwriteType.Role : OverwriteType.Member;
     const body: RESTPutAPIChannelPermissionJSONBody = { type: overwriteType, allow, deny };
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(`Would set a ${p.target_type} overwrite for \`${p.target_id}\` on #${channel.name ?? channel.id}.`, {
         endpoint: 'PUT /channels/{channel_id}/permissions/{overwrite_id}',
@@ -662,7 +658,7 @@ const deletePermissionOverwrite: RegisteredTool = {
   handle: async (params: ToolInput, ctx: ToolContext): Promise<MCPResult> => {
     const p = params as unknown as DeletePermissionOverwriteInput;
     const channel = await requireGuildChannel(ctx, p.channel_id);
-    const reason = auditReason(p.reason);
+    const reason = resolveReason(p.reason);
     if (isDryRun(p)) {
       return dryRunResult(`Would remove the overwrite for \`${p.target_id}\` on #${channel.name ?? channel.id}.`, {
         endpoint: 'DELETE /channels/{channel_id}/permissions/{overwrite_id}',

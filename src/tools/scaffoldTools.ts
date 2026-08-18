@@ -11,8 +11,9 @@ import {
   type ScaffoldStep,
 } from '../services/scaffoldService.js';
 import { parseColor, permissionNamesToBits } from '../services/permissionService.js';
-import { CHANNEL_TYPE_LABELS, DEFAULT_AUDIT_REASON } from '../constants.js';
+import { CHANNEL_TYPE_LABELS } from '../constants.js';
 import { describeDiscordError } from '../client/errors.js';
+import { resolveReason } from '../utils/format.js';
 
 interface ScaffoldInput {
   guild_id: string;
@@ -48,7 +49,7 @@ const scaffoldServer: RegisteredTool = {
     const p = params as unknown as ScaffoldInput;
     const template = p.template ?? 'community';
     const isDryRun = p.dry_run !== false;
-    const reason = p.reason ?? DEFAULT_AUDIT_REASON;
+    const reason = resolveReason(p.reason);
 
     let plan;
     try {

@@ -84,6 +84,17 @@ export async function fetchCurrentAuthorization(accessToken: string): Promise<RE
   return (await res.json()) as RESTGetAPIOAuth2CurrentAuthorizationResult;
 }
 
+/** Shared success page rendered by both the HTTP callback and the OAuth bootstrap. */
+export function oauthSuccessHtml(username: string, note: string): string {
+  return (
+    '<html><body style="font-family:sans-serif;padding:2rem">' +
+    '<h2>Authorization successful</h2>' +
+    `<p>Signed in as <strong>${username}</strong>.</p>` +
+    `<p>${note}</p>` +
+    '</body></html>'
+  );
+}
+
 /**
  * Writes the exchanged token into the .env file (DISCORD_TOKEN /
  * DISCORD_TOKEN_TYPE=oauth2), preserving every other line.

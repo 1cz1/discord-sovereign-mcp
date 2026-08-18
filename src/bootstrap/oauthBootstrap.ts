@@ -13,17 +13,14 @@
  */
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { buildAuthorizationUrl, exchangeCode, fetchCurrentAuthorization, persistTokenToEnv } from '../services/oauthService.js';
-import type { OAuthConfig } from '../config.js';
-
-export function buildOAuthConfig(env: NodeJS.ProcessEnv): OAuthConfig {
-  return {
-    clientId: env['DISCORD_OAUTH2_CLIENT_ID'] ?? '',
-    clientSecret: env['DISCORD_OAUTH2_CLIENT_SECRET'] ?? '',
-    redirectUri: env['DISCORD_OAUTH2_REDIRECT_URI'] ?? 'http://localhost:8788/callback',
-    port: Number(env['DISCORD_OAUTH2_PORT'] ?? 8788),
-  };
-}
+import {
+  buildAuthorizationUrl,
+  exchangeCode,
+  fetchCurrentAuthorization,
+  oauthSuccessHtml,
+  persistTokenToEnv,
+} from '../services/oauthService.js';
+import { buildOAuthConfig } from '../config.js';
 
 function die(message: string): never {
   console.error(`\n❌ ${message}`);
@@ -108,11 +105,10 @@ export function runOAuthBootstrap(argv: string[], env: NodeJS.ProcessEnv): Promi
         res
           .writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
           .end(
-            '<html><body style="font-family:sans-serif;padding:2rem">' +
-              '<h2>Authorization successful</h2>' +
-              `<p>Signed in as <strong>${username}</strong>.</p>` +
-              '<p>You can close this tab. Restart the MCP server to pick up the user token.</p>' +
-              '</body></html>'
+            oauthSuccessHtml(
+              username,
+              'You can close this tab. Restart the MCP server to pick up the user token.'
+            )
           );
         server.close(() => resolve(0));
       } catch (err) {

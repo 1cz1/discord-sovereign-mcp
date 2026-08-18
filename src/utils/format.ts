@@ -1,10 +1,15 @@
 import type { APIBan, APIChannel, APIGuild, APIGuildMember, APIMessage, APIRole } from 'discord-api-types/payloads/v10';
 import { ChannelType } from 'discord-api-types/v10';
-import { CHARACTER_LIMIT, DEFAULT_LIMIT, MAX_LIMIT, GUILD_CHANNEL_TYPE_LABELS } from '../constants.js';
+import { CHARACTER_LIMIT, DEFAULT_LIMIT, MAX_LIMIT, GUILD_CHANNEL_TYPE_LABELS, DEFAULT_AUDIT_REASON } from '../constants.js';
 
 export function truncate(text: string, max = CHARACTER_LIMIT): string {
   if (text.length <= max) return text;
   return `${text.slice(0, max - 3)}...`;
+}
+
+/** Falls back to the configured audit reason when a tool call omits one. */
+export function resolveReason(reason: string | undefined, auditReason = DEFAULT_AUDIT_REASON): string {
+  return reason && reason.trim().length > 0 ? reason.trim() : auditReason;
 }
 
 export interface Page<T> {
@@ -19,7 +24,7 @@ export interface Page<T> {
   };
 }
 
-export function normalizePagination(input: { limit?: number; offset?: number }): { limit: number; offset: number } {
+function normalizePagination(input: { limit?: number; offset?: number }): { limit: number; offset: number } {
   const limit = Math.min(Math.max(input.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
   const offset = Math.max(input.offset ?? 0, 0);
   return { limit, offset };
@@ -107,10 +112,6 @@ export function fmtMessage(msg: APIMessage): string {
   const embeds = msg.embeds && msg.embeds.length > 0 ? `\n[${msg.embeds.length} embed(s)]` : '';
   const stamp = new Date(msg.timestamp).toISOString().replace('T', ' ').slice(0, 19);
   return `**${author}** (${stamp}) \`${msg.id}\`${content}${attachments}${embeds}`;
-}
-
-export function fmtBitfield(bits: bigint): string {
-  return bits.toString();
 }
 
 export function jsonSafe(value: unknown): unknown {

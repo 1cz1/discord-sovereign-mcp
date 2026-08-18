@@ -26,14 +26,9 @@ import {
   parseColor,
   permissionNamesToBits,
 } from '../services/permissionService.js';
-import { fmtGuild, fmtPermissions, fmtRole, paginate } from '../utils/format.js';
-import { DEFAULT_AUDIT_REASON } from '../constants.js';
+import { fmtGuild, fmtPermissions, fmtRole, paginate, resolveReason } from '../utils/format.js';
 
 const PERMISSION_BITS = PermissionFlagsBits as Record<string, bigint>;
-
-function auditReason(reason: string | undefined): string {
-  return reason ?? DEFAULT_AUDIT_REASON;
-}
 
 async function guard(guildId: string, ctx: ToolContext): Promise<void> {
   await ctx.control.assertControl(guildId);
@@ -365,17 +360,17 @@ const updateGuildTool: RegisteredTool = {
       const text = [
         `🔍 Dry run — no changes applied. Guild \`${guildId}\` would be updated with:`,
         ...fields.map((f) => `- ${f}: \`${JSON.stringify(body[f as keyof RESTPatchAPIGuildJSONBody])}\``),
-        `Set dry_run=false to apply (reason: "${auditReason(params.reason as string | undefined)}").`,
+        `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
       return ok(text, { dry_run: true, would_execute: { guild_id: guildId, ...body } });
     }
 
     await guard(guildId, ctx);
-    const guild = await ctx.client.updateGuild(guildId, body, { reason: auditReason(params.reason as string | undefined) });
+    const guild = await ctx.client.updateGuild(guildId, body, { reason: resolveReason(params.reason as string | undefined) });
     const text = [
       `✅ Guild updated: **${guild.name}** \`${guild.id}\``,
       `Changed fields: ${fields.join(', ')}`,
-      `Audit reason: "${auditReason(params.reason as string | undefined)}"`,
+      `Audit reason: "${resolveReason(params.reason as string | undefined)}"`,
     ].join('\n');
     return ok(text, { guild: { id: guild.id, name: guild.name }, changed_fields: fields });
   },
@@ -559,7 +554,7 @@ const createRoleTool: RegisteredTool = {
     }
 
     await guard(guildId, ctx);
-    const role = await ctx.client.createRole(guildId, body, { reason: auditReason(params.reason as string | undefined) });
+    const role = await ctx.client.createRole(guildId, body, { reason: resolveReason(params.reason as string | undefined) });
     const permissions = bitsToPermissionNames(BigInt(role.permissions));
     const text = [
       `✅ Role created: **@${role.name}** \`${role.id}\``,
@@ -636,13 +631,13 @@ const updateRoleTool: RegisteredTool = {
       const text = [
         `🔍 Dry run — no changes applied. Role \`${roleId}\` in \`${guildId}\` would be updated with:`,
         ...lines,
-        `Set dry_run=false to apply (reason: "${auditReason(params.reason as string | undefined)}").`,
+        `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
       return ok(text, { dry_run: true, would_execute: { guild_id: guildId, role_id: roleId, ...body } });
     }
 
     await guard(guildId, ctx);
-    const role = await ctx.client.updateRole(guildId, roleId, body, { reason: auditReason(params.reason as string | undefined) });
+    const role = await ctx.client.updateRole(guildId, roleId, body, { reason: resolveReason(params.reason as string | undefined) });
     const permissions = bitsToPermissionNames(BigInt(role.permissions));
     const text = [
       `✅ Role updated: **@${role.name}** \`${role.id}\``,
@@ -697,7 +692,7 @@ const deleteRoleTool: RegisteredTool = {
     }
 
     await guard(guildId, ctx);
-    await ctx.client.deleteRole(guildId, roleId, { reason: auditReason(params.reason as string | undefined) });
+    await ctx.client.deleteRole(guildId, roleId, { reason: resolveReason(params.reason as string | undefined) });
     return ok(
       `✅ Role \`${roleId}\` deleted from guild \`${guildId}\`. Members who held it no longer have it.`,
       { guild_id: guildId, role_id: roleId, deleted: true }
@@ -747,13 +742,13 @@ const reorderRolesTool: RegisteredTool = {
       const text = [
         `🔍 Dry run — no changes applied. Roles in \`${guildId}\` would be reordered (sequentially, in this order):`,
         ...lines,
-        `Set dry_run=false to apply (reason: "${auditReason(params.reason as string | undefined)}").`,
+        `Set dry_run=false to apply (reason: "${resolveReason(params.reason as string | undefined)}").`,
       ].join('\n');
       return ok(text, { dry_run: true, would_execute: { guild_id: guildId, positions } });
     }
 
     await guard(guildId, ctx);
-    const roles = await ctx.client.reorderRoles(guildId, positions, { reason: auditReason(params.reason as string | undefined) });
+    const roles = await ctx.client.reorderRoles(guildId, positions, { reason: resolveReason(params.reason as string | undefined) });
     const updated = roles.map((r: APIRole) => ({ id: r.id, name: r.name, position: r.position }));
     const lines = updated.map((r) => `- **@${r.name}** \`${r.id}\` → position ${r.position}`);
     return ok(`✅ Roles reordered in \`${guildId}\`:\n${lines.join('\n')}`, { roles: updated });

@@ -4,6 +4,9 @@ Ready-to-paste configs for connecting an AI client to `discord-sovereign-mcp`.
 The server is invoked as `npx discord-sovereign-mcp@latest` (stdio transport); see
 [../http/http-client-config.json](../http/http-client-config.json) for the HTTP transport variant.
 
+> **Easier than copy-paste:** `npx discord-sovereign-mcp@latest --install` configures every client
+> below (and Claude Desktop, VS Code too) for you — see [docs/INSTALL.md](../../docs/INSTALL.md).
+
 | File | Client | Where it goes |
 | --- | --- | --- |
 | `claude-code.json` | Claude Code | project scope: `.mcp.json` at the repo root |

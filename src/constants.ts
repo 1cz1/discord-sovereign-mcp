@@ -1,8 +1,7 @@
 import { ChannelType } from 'discord-api-types/v10';
 
 export const SERVER_NAME = 'discord-sovereign-mcp';
-export const PACKAGE_NAME = 'discord-sovereign-mcp';
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 export const CHARACTER_LIMIT = 25_000;
 export const DEFAULT_LIMIT = 20;
@@ -52,9 +51,5 @@ export const ROLE_COLOR_PALETTE: Record<string, number> = {
   teal: 0x1abc9c,
   cyan: 0x00ffff,
   blurple: 0x5865f2,
-  gold: 0xf1c40f,
   pink2: 0xff73fa,
 };
-
-export const EMOJI_NOTE =
-  'Note: Discord accepts emoji in channel names, thread names, role names and messages.';
