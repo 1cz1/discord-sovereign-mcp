@@ -42,7 +42,7 @@ function buildRemediation(v: ControlVerdict): string {
       }.`
     );
   }
-  parts.push('Run discord_assert_control to see the full ladder, then discord_elevate_control to move the client role to the top (or drag it to the top in Server Settings > Roles).');
+  parts.push('Run discord_assert_sovereignty to see the full ladder, then discord_elevate_control to move the client role to the top (or drag it to the top in Server Settings > Roles).');
   return parts.join(' ');
 }
 
@@ -61,7 +61,10 @@ function sortLadder(roles: APIRole[]): APIRole[] {
  * common cause of "Missing Permissions" failures in LLM-driven admin bots.
  */
 export class ControlService {
-  constructor(private readonly client: DiscordClient) {}
+  constructor(
+    private readonly client: DiscordClient,
+    private readonly allowedGuilds: string[] = []
+  ) {}
 
   async getVerdict(guildId: string): Promise<ControlVerdict> {
     const guild = await this.client.getGuild(guildId);
@@ -127,8 +130,13 @@ export class ControlService {
     return verdict;
   }
 
-  /** Throws ControlError when the client does not hold the #1 role (or ownership). */
+  /** Throws ControlError when the client does not hold the #1 role (or ownership), or the guild is not allowlisted. */
   async assertControl(guildId: string): Promise<ControlVerdict> {
+    if (this.allowedGuilds.length > 0 && !this.allowedGuilds.includes(guildId)) {
+      throw new Error(
+        `Guild ${guildId} is not in DISCORD_ALLOWED_GUILDS. Add it to the allowlist in .env to manage it.`
+      );
+    }
     const verdict = await this.getVerdict(guildId);
     if (!verdict.controlled) {
       throw new ControlError(guildId, verdict);

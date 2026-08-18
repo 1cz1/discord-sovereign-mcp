@@ -1,7 +1,7 @@
 import { RESTJSONErrorCodes as Code } from 'discord-api-types/v10';
 
 const GUILD_ACTION_HINT =
-  'Guild-level permission checks depend on the client holding the #1 (highest) role. Run discord_assert_control to audit the hierarchy, then discord_elevate_control.';
+  'Guild-level permission checks depend on the client holding the #1 (highest) role. Run discord_assert_sovereignty to audit the hierarchy, then discord_elevate_control.';
 
 export interface DiscordErrorInfo {
   message: string;

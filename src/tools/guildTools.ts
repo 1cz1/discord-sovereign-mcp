@@ -35,8 +35,8 @@ function auditReason(reason: string | undefined): string {
   return reason ?? DEFAULT_AUDIT_REASON;
 }
 
-function guard(guildId: string, ctx: ToolContext): void {
-  ctx.control.assertControl(guildId);
+async function guard(guildId: string, ctx: ToolContext): Promise<void> {
+  await ctx.control.assertControl(guildId);
 }
 
 // ── discord_whoami ────────────────────────────────────────────────────────────

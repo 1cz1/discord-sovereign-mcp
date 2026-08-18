@@ -830,7 +830,7 @@ export const memberTools: RegisteredTool[] = [
         suppress_embeds: z
           .boolean()
           .optional()
-          .describe('True to set SUPPRESS_EMBEDS on the message. Cannot reliably un-suppress without the full flag set.'),
+          .describe('True to set SUPPRESS_EMBEDS on the message, false to clear it. Omit to leave flags unchanged.'),
         reason: reasonSchema,
         dry_run: dryRunSchema,
       })
@@ -842,7 +842,6 @@ export const memberTools: RegisteredTool[] = [
       const dryRun = params.dry_run !== false;
       const reason = safeReason(params);
       const content = typeof params.content === 'string' ? params.content : undefined;
-      const suppressEmbeds = params.suppress_embeds === true;
 
       let embed: APIEmbed | null = null;
       if (params.embed !== undefined && typeof params.embed === 'object' && params.embed !== null) {
@@ -856,7 +855,13 @@ export const memberTools: RegisteredTool[] = [
       const body: RESTPatchAPIChannelMessageJSONBody = {};
       if (content !== undefined) body.content = content.length === 0 ? null : content;
       if (embed !== null) body.embeds = [embed];
-      if (suppressEmbeds) body.flags = MessageFlags.SuppressEmbeds;
+      if (params.suppress_embeds !== undefined) {
+        const existing = await ctx.client.getMessage(channelId, messageId);
+        const flags = existing.flags ?? 0;
+        body.flags = params.suppress_embeds
+          ? flags | MessageFlags.SuppressEmbeds
+          : flags & ~MessageFlags.SuppressEmbeds;
+      }
 
       if (Object.keys(body).length === 0) {
         return fail('Nothing to edit: provide at least one of `content`, `embed` or `suppress_embeds`.');

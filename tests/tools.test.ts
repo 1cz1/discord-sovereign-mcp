@@ -4,6 +4,7 @@ import type { DiscordClient } from '../src/client/discordClient.js';
 import { ControlService } from '../src/services/controlService.js';
 import { scaffoldTools } from '../src/tools/scaffoldTools.js';
 import { controlTools } from '../src/tools/controlTools.js';
+import { guildTools } from '../src/tools/guildTools.js';
 import { tools as allTools } from '../src/tools/index.js';
 import type { ToolContext } from '../src/tools/registry.js';
 
@@ -13,6 +14,7 @@ const BOT_ID = '2000000000000000000';
 const scaffoldTool = scaffoldTools[0]!;
 const assertSovereignty = controlTools[0]!;
 const elevateControl = controlTools[1]!;
+const updateGuildTool = guildTools.find((t) => t.name === 'discord_update_guild')!;
 
 function role(id: string, name: string, position: number): APIRole {
   return { id, name, position, color: 0, hoist: false, icon: null, unicode_emoji: null, managed: false, mentionable: false, permissions: '0', flags: 0 } as unknown as APIRole;
@@ -42,6 +44,7 @@ function makeClient(): any {
       return { id: channelId } as unknown as APIChannel;
     }),
     reorderRoles: vi.fn(),
+    updateGuild: vi.fn(async (_g: string): Promise<APIGuild> => ({ id: GUILD } as unknown as APIGuild)),
   };
   return { client, calls };
 }
@@ -121,6 +124,28 @@ describe('discord_elevate_control', () => {
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent?.dry_run).toBe(true);
     expect(client.reorderRoles).not.toHaveBeenCalled();
+  });
+});
+
+describe('Sovereignty Guard regression (async guard)', () => {
+  it('blocks discord_update_guild before any mutation when control is denied', async () => {
+    const { client } = makeClient();
+    client.getRoles = vi.fn(async () => [role('r-higher', 'Higher', 20), role('r-client', 'Client', 10), role(GUILD, 'everyone', 0)]);
+    client.getMember = vi.fn(async () => ({ roles: ['r-client'] } as unknown as APIGuildMember));
+    await expect(
+      updateGuildTool.handle({ guild_id: GUILD, name: 'Renamed', dry_run: false }, ctx(client))
+    ).rejects.toThrow(/Control denied/);
+    expect(client.updateGuild).not.toHaveBeenCalled();
+  });
+
+  it('allows the mutation when control is held', async () => {
+    const { client } = makeClient();
+    const result = await updateGuildTool.handle(
+      { guild_id: GUILD, name: 'Renamed', dry_run: false },
+      ctx(client)
+    );
+    expect(result.isError).toBeUndefined();
+    expect(client.updateGuild).toHaveBeenCalledOnce();
   });
 });
 

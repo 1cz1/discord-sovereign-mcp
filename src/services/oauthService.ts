@@ -1,7 +1,8 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { OAuth2Scopes } from 'discord-api-types/v10';
 import type { RESTGetAPIOAuth2CurrentAuthorizationResult, RESTPostOAuth2AccessTokenResult } from 'discord-api-types/rest/v10';
 import type { OAuthConfig } from '../config.js';
+import { REQUEST_TIMEOUT_MS } from '../constants.js';
 
 const API_BASE = 'https://discord.com/api/v10';
 const TOKEN_URL = `${API_BASE}/oauth2/token`;
@@ -57,6 +58,7 @@ export async function exchangeCode(cfg: OAuthConfig, code: string): Promise<REST
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) {
     let detail = '';
@@ -74,6 +76,7 @@ export async function exchangeCode(cfg: OAuthConfig, code: string): Promise<REST
 export async function fetchCurrentAuthorization(accessToken: string): Promise<RESTGetAPIOAuth2CurrentAuthorizationResult> {
   const res = await fetch(CURRENT_AUTHORIZATION_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) {
     throw new OAuthError(`Could not read current authorization (${res.status}). The token may be invalid or expired.`);
@@ -86,6 +89,9 @@ export async function fetchCurrentAuthorization(accessToken: string): Promise<RE
  * DISCORD_TOKEN_TYPE=oauth2), preserving every other line.
  */
 export function persistTokenToEnv(envPath: string, token: string): void {
+  if (!existsSync(envPath)) {
+    writeFileSync(envPath, '', 'utf8');
+  }
   const lines = readFileSync(envPath, 'utf8').split(/\r?\n/);
   const setKey = (key: string, value: string): void => {
     const idx = lines.findIndex((l) => l.startsWith(`${key}=`));

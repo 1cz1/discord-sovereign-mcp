@@ -791,6 +791,8 @@ const auditPermissions: RegisteredTool = {
     const truncated = channels.length > max;
     const slice = truncated ? channels.slice(0, max) : channels;
 
+    const preloaded = { guild, member, roles: await ctx.client.getRoles(p.guild_id) };
+
     const report: {
       id: string;
       name: string;
@@ -808,7 +810,7 @@ const auditPermissions: RegisteredTool = {
         manageRoles = true;
       } else {
         try {
-          const perms = await calculateMemberPermissions(ctx.client, p.guild_id, me.id, ch);
+          const perms = await calculateMemberPermissions(ctx.client, p.guild_id, me.id, ch, preloaded);
           manageChannels = perms.names.includes('ManageChannels');
           manageRoles = perms.names.includes('ManageRoles');
         } catch (err) {

@@ -328,7 +328,20 @@ export class DiscordClient {
   }
 
   async getBans(guildId: string): Promise<APIBan[]> {
-    return this.request<APIBan[]>('get', Routes.guildBans(guildId), { auth: true });
+    const all: APIBan[] = [];
+    let after: string | undefined;
+    for (;;) {
+      const params = new URLSearchParams({ limit: '1000' });
+      if (after !== undefined) params.set('after', after);
+      const page = await this.request<APIBan[]>('get', Routes.guildBans(guildId), {
+        query: params,
+        auth: true,
+      });
+      all.push(...page);
+      if (page.length < 1000) break;
+      after = page[page.length - 1]!.user.id;
+    }
+    return all;
   }
 
   async getBan(guildId: string, userId: string): Promise<APIBan> {
@@ -377,6 +390,10 @@ export class DiscordClient {
     if (query.before !== undefined) params.set('before', query.before);
     if (query.after !== undefined) params.set('after', query.after);
     return this.request<APIMessage[]>('get', Routes.channelMessages(channelId), { query: params, auth: true });
+  }
+
+  async getMessage(channelId: string, messageId: string): Promise<APIMessage> {
+    return this.request<APIMessage>('get', Routes.channelMessage(channelId, messageId), { auth: true });
   }
 
   async editMessage(

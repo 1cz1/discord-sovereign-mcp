@@ -1,5 +1,5 @@
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { APIChannel, APIRole, APIOverwrite } from 'discord-api-types/payloads/v10';
+import type { APIChannel, APIGuild, APIGuildMember, APIRole, APIOverwrite } from 'discord-api-types/payloads/v10';
 import { OverwriteType } from 'discord-api-types/v10';
 import type { DiscordClient } from '../client/discordClient.js';
 import { ROLE_COLOR_PALETTE } from '../constants.js';
@@ -94,19 +94,28 @@ export interface EffectivePermissions {
   source: string;
 }
 
+export interface PermissionPreload {
+  guild: APIGuild;
+  member: APIGuildMember | null;
+  roles: APIRole[];
+}
+
 /**
  * Computes the effective permissions of a member in a guild.
  * Applies the owner bypass, the Administrator shortcut, guild-level
  * @everyone + role permissions, then channel overwrites in Discord's
  * documented precedence order (@everyone → roles → member).
+ * Pass `preloaded` (guild, member, roles fetched once) when computing
+ * permissions for many channels of the same guild to avoid N+1 fetches.
  */
 export async function calculateMemberPermissions(
   client: DiscordClient,
   guildId: string,
   userId: string,
-  channel?: APIChannel
+  channel?: APIChannel,
+  preloaded?: PermissionPreload
 ): Promise<EffectivePermissions> {
-  const guild = await client.getGuild(guildId);
+  const guild = preloaded?.guild ?? (await client.getGuild(guildId));
   if (guild.owner_id === userId) {
     return {
       bitfield: ALL_PERMISSIONS.toString(),
@@ -116,10 +125,11 @@ export async function calculateMemberPermissions(
     };
   }
 
-  const [member, roles] = await Promise.all([
-    client.getMember(guildId, userId).catch(() => null),
-    client.getRoles(guildId),
-  ]);
+  const member =
+    preloaded !== undefined
+      ? preloaded.member
+      : await client.getMember(guildId, userId).catch(() => null);
+  const roles = preloaded?.roles ?? (await client.getRoles(guildId));
   if (!member) {
     throw new PermissionError(`User ${userId} is not a member of guild ${guildId}.`);
   }

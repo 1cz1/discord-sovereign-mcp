@@ -32,7 +32,7 @@ async function main(): Promise<void> {
 
   const ctx: ToolContext = {
     client,
-    control: new ControlService(client),
+    control: new ControlService(client, config.allowedGuilds),
   };
 
   const server = new McpServer({ name: SERVER_NAME, version: VERSION });
@@ -96,6 +96,9 @@ async function main(): Promise<void> {
       res.on('close', () => {
         const i = transports.indexOf(transport);
         if (i >= 0) transports.splice(i, 1);
+        transport.close().catch((err) => {
+          console.error(`[discord-sovereign-mcp] transport close failed: ${err instanceof Error ? err.message : String(err)}`);
+        });
       });
       await server.connect(transport);
       await transport.handleRequest(req, res);

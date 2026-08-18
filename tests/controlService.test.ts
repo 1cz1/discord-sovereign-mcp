@@ -119,6 +119,18 @@ describe('ControlService.assertControl', () => {
     const service = new ControlService(makeClient({ roles, clientRoles: ['r-client'] }));
     await expect(service.assertControl(GUILD)).rejects.toBeInstanceOf(ControlError);
   });
+
+  it('rejects guilds outside DISCORD_ALLOWED_GUILDS even when control is granted', async () => {
+    const service = new ControlService(makeClient({ ownerId: BOT_ID }), [GUILD]);
+    await expect(service.assertControl(GUILD)).resolves.toBeDefined();
+    await expect(service.assertControl('4000000000000000000')).rejects.toThrow(/DISCORD_ALLOWED_GUILDS/);
+    await expect(service.assertControl('4000000000000000000')).rejects.not.toBeInstanceOf(ControlError);
+  });
+
+  it('treats an empty allowlist as allow-all', async () => {
+    const service = new ControlService(makeClient({ ownerId: BOT_ID }), []);
+    await expect(service.assertControl(GUILD)).resolves.toBeDefined();
+  });
 });
 
 describe('ControlService.elevateControl', () => {
